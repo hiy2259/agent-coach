@@ -1,0 +1,1 @@
+<!-- STAGING: candidate copy for the turn under test. apply_change.py writes the proposed change here; on MERGE it is promoted to prompt.current.md. Starts as a copy of prompt.current.md; never the live file (S4). -->

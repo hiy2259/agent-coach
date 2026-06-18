@@ -1,0 +1,7 @@
+Please review this PR:
+
+@app.route("/users")
+def get_users():
+    name = request.args.get("name")
+    query = f"SELECT * FROM users WHERE name = '{name}'"
+    return db.execute(query).fetchall()

@@ -1,0 +1,11 @@
+The following Python code occasionally lets the balance go negative under concurrent requests. Find the cause and fix it.
+
+class Account:
+    def __init__(self, balance):
+        self.balance = balance
+
+    def withdraw(self, amount):
+        if self.balance >= amount:
+            self.balance -= amount
+            return True
+        return False

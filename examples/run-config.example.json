@@ -1,0 +1,12 @@
+{
+  "_note": "런타임/루프 설정 예시. 모델 ID는 실제 사용 값으로 교체하세요. 핵심 규칙: grader != proposer(제안≠채점), runner는 실사용 모델/temp 매칭. '_' 접두 필드는 무시됩니다.",
+  "target": "./agents/dev-agent.md",
+  "golden_set": "./golden-set.json",
+  "runner":   { "model": "claude-opus-4-8", "temperature": 0.7, "max_output_tokens": 4096 },
+  "grader":   { "model": "claude-sonnet-4-6", "temperature": 0, "version_id": "2026-06-16" },
+  "proposer": { "model": "claude-opus-4-8", "temperature": 0.3 },
+  "calibration": { "k_calib": 5 },
+  "loop":     { "n_turns": 10, "no_progress_k": 3, "subtraction_every": 3 },
+  "budget":   { "max_usd_total": 20.0, "max_usd_per_turn": 3.0 },
+  "tools":    { "mode": "none" }
+}

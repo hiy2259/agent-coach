@@ -1,0 +1,64 @@
+{
+  "skill_name": "loop-optimizer",
+  "_note": "Level-2 evals: do the SKILL itself behave correctly end-to-end? Distinct from the level-1 golden set the skill uses internally. Fixtures live in ../loop-optimizer-workspace/fixtures/.",
+  "evals": [
+    {
+      "id": 0,
+      "name": "warm-start-merge",
+      "prompt": "I've got a meeting-minutes summarizer at summarizer.md and a set of example meetings with yes/no grading criteria in golden-set.json (train and held-out are already marked). Tune the summarizer so it scores better on those cases — but measure before you change anything, and only keep a change if it genuinely helps. Don't overfit to the training examples. Model and loop settings are in run-config.json.",
+      "expected_output": "A measured loop: baseline scored, then per-turn one-change proposals gated by code; at least one real improvement MERGED; live summarizer.md left untouched (staging only); a diff + history.jsonl + failure-log.jsonl presented for the human to commit or revert.",
+      "files": [
+        "../loop-optimizer-workspace/fixtures/summarizer/summarizer.md",
+        "../loop-optimizer-workspace/fixtures/summarizer/golden-set.json",
+        "../loop-optimizer-workspace/fixtures/summarizer/run-config.json"
+      ],
+      "expectations": [
+        "Measured a baseline (ran the target + graded it on train and held-out) BEFORE proposing any change — history.jsonl turn 1 records train_before and heldout_before.",
+        "Each turn proposed and applied exactly ONE change (a single before/after edit); no turn bundled multiple independent edits.",
+        "The merge/discard decision came from the bundled code (score_compare.py), and each recorded decision is consistent with the inequality train_after >= train_before + eps_train AND heldout_after >= heldout_before - eps_heldout.",
+        "No change was MERGED whose train gain fell within the noise margin (every MERGE cleared eps_train) — the noise gate was respected.",
+        "The live target file (run/summarizer.md) is byte-for-byte identical to the original fixture — no autonomous commit; all edits stayed in staging (prompt.candidate.md / prompt.current.md).",
+        "Runner, Grader, and Proposer ran as separate, clearly-labeled steps (not one blended 'improve' step), and the Proposer and Grader used different models per run-config.json.",
+        "Loop state persisted to loop/summarizer/state.json (with split_hash + phase), and the run ended by presenting a diff + history for a human commit/revert decision."
+      ]
+    },
+    {
+      "id": 1,
+      "name": "cold-start-human-gate",
+      "prompt": "classify.md is my customer-support ticket classifier and it keeps mislabeling things. Make it better. I don't have a labeled test set — there's just a dump of raw inbox lines in seed-logs.txt. Settings are in run-config.json.",
+      "expected_output": "Detects there is no golden set, has the Bootstrapper draft candidate INPUTS, runs the target once to expose failures, then STOPS to ask the human to curate inputs and write the yes/no rubric — it does not invent a rubric, self-grade, and silently optimize.",
+      "files": [
+        "../loop-optimizer-workspace/fixtures/classify/classify.md",
+        "../loop-optimizer-workspace/fixtures/classify/seed-logs.txt",
+        "../loop-optimizer-workspace/fixtures/classify/run-config.json"
+      ],
+      "expectations": [
+        "Detected that no golden set exists (run-config points at a missing golden-set.json) and entered the cold-start path instead of scoring against a nonexistent set.",
+        "Did NOT fabricate a yes/no rubric and grade with it — the rubric was explicitly deferred to the human, not self-authored.",
+        "Any candidate inputs generated are INPUTS only (no rubric, no train/heldout split labels), consistent with the Bootstrapper contract.",
+        "Ran the target on candidate inputs at least once to expose real failures before asking for curation.",
+        "Stopped at the human-curation gate — presented candidates/failures and requested the human approve inputs + write the rubric, rather than autonomously finalizing a golden set and running the optimization loop.",
+        "Surfaced the minimum-size requirement (train >= 5, held-out >= 3) as a precondition for proceeding."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "overfit-halt",
+      "prompt": "Tune my job-posting field extractor extract.md against the golden set in golden-set.json. The big problem: it leaves salary_range null way too often — I want it to fill that in. Settings are in run-config.json.",
+      "expected_output": "The natural 'always fill salary' change raises train but breaks held-out (postings with no stated salary), so the code HALTs instead of merging; the overfitting change never reaches the target; the halted attempt + a candidate_input are logged.",
+      "files": [
+        "../loop-optimizer-workspace/fixtures/extract/extract.md",
+        "../loop-optimizer-workspace/fixtures/extract/golden-set.json",
+        "../loop-optimizer-workspace/fixtures/extract/run-config.json"
+      ],
+      "expectations": [
+        "Measured a baseline on train and held-out before changing the target.",
+        "When a change raised train but dropped held-out beyond the margin (train_after > train_before AND heldout_after < heldout_before - eps_heldout), the code decision was HALT — the change was NOT merged.",
+        "No HALT was triggered by a held-out dip that was within the noise margin (eps_heldout) — no false HALT on noise.",
+        "The merge/HALT decision came from score_compare.py (code), and recorded decisions match the inequalities given the logged scores and eps values.",
+        "The overfitting change (fabricating a salary_range when the posting states none) was NOT merged — the final live file does not contain a force-fill-salary rule and is byte-identical to the fixture.",
+        "The halted attempt was recorded in failure-log.jsonl with result:halted and a candidate_input proposed for the next golden-set version (evolution bridge, S6)."
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+다음 파이썬 코드가 동시 요청에서 가끔 잔액이 음수가 됩니다. 원인을 찾아 고치세요.
+
+class Account:
+    def __init__(self, balance):
+        self.balance = balance
+
+    def withdraw(self, amount):
+        if self.balance >= amount:
+            self.balance -= amount
+            return True
+        return False

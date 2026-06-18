@@ -1,0 +1,76 @@
+{
+  "_note": "Abbreviated example for illustrating the format. A real golden set must satisfy min_size (active train >= 5 * heldout >= 3). Fields prefixed with '_' are ignored by the parser.",
+  "target": "./agents/dev-agent.md",
+  "version": "v2",
+  "parent_version": "v1",
+  "created": "2026-06-10",
+  "updated": "2026-06-16",
+  "changelog": "After v1 saturated, added a real-world 'missed concurrency bug' failure to train (from the failure log). Retired the non-discriminating 'print-hello'.",
+  "min_size": { "train": 5, "heldout": 3 },
+  "cases": [
+    {
+      "id": "regex-email-fix",
+      "split": "train",
+      "provenance": "seed",
+      "added_in_version": "v1",
+      "realistic": true,
+      "status": "active",
+      "tags": ["regex", "debugging"],
+      "notes": "A regex-debugging request that came up often in real logs. Short input, so used inline.",
+      "input": "This regex doesn't match emails correctly: ^\\w+@\\w+$ - what's wrong and how do I fix it?",
+      "rubric": [
+        "Did it point out that it fails to handle the TLD (e.g. .com) and the dot (.)?",
+        "Did it provide a working improved regex?",
+        "Did it avoid inventing a fake problem not present in the input?"
+      ]
+    },
+    {
+      "id": "debug-race-condition",
+      "split": "train",
+      "provenance": "failure-log",
+      "added_in_version": "v2",
+      "realistic": true,
+      "status": "active",
+      "tags": ["debugging", "concurrency"],
+      "notes": "Derived from a real failure where the v1 agent missed a negative-balance bug. A representative case of evolution (S6 feedback). Code input, so uses input_file.",
+      "input_file": "./cases/debug-race-condition.input.txt",
+      "rubric": [
+        "Did it name the race condition (check-then-act) as the real cause?",
+        "Did it fix it correctly with a lock or an atomic operation?",
+        "Did it avoid inventing a cause not present in the code?",
+        "Did it keep the existing withdraw signature intact?",
+        "Did it explain in a line or two why that is the cause?"
+      ]
+    },
+    {
+      "id": "review-sql-injection",
+      "split": "heldout",
+      "provenance": "human",
+      "added_in_version": "v1",
+      "realistic": true,
+      "status": "active",
+      "tags": ["code-review", "security"],
+      "notes": "A real-world case taken from an actual PR -> placed in held-out first per the reality-first rule.",
+      "input_file": "./cases/review-sql-injection.input.txt",
+      "rubric": [
+        "Did it point out the SQL injection vulnerability?",
+        "Did it propose a parameter-binding (prepared statement) fix?",
+        "Did it rate the severity appropriately (high)?",
+        "Did it avoid fabricating a non-existent problem?",
+        "Did it show a fix example that actually works?"
+      ]
+    },
+    {
+      "id": "print-hello",
+      "split": "train",
+      "provenance": "bootstrap",
+      "added_in_version": "v1",
+      "realistic": false,
+      "status": "retired",
+      "tags": ["trivial"],
+      "notes": "Every version passes -> zero discrimination. Retired in v2 (excluded from scoring, kept for the record). A golden-set-level 'subtraction' example.",
+      "input": "Print 'hello' in Python.",
+      "rubric": ["Did it provide code that prints hello?"]
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+<!-- STAGING: current target copy. The live target file is copied here at init; the loop reads/promotes here and NEVER writes the live file (S4). Replace this entire file with the target's contents at setup. -->

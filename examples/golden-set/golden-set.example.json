@@ -1,0 +1,76 @@
+{
+  "_note": "포맷 설명용 축약 예시입니다. 실제 골든셋은 min_size(active train≥5 · heldout≥3)를 충족해야 합니다. '_' 접두 필드는 파서가 무시합니다.",
+  "target": "./agents/dev-agent.md",
+  "version": "v2",
+  "parent_version": "v1",
+  "created": "2026-06-10",
+  "updated": "2026-06-16",
+  "changelog": "v1 포화 후 실전에서 드러난 '동시성 버그 미탐지' 실패를 train에 추가(failure-log 유래). 변별력 없던 'print-hello'는 은퇴.",
+  "min_size": { "train": 5, "heldout": 3 },
+  "cases": [
+    {
+      "id": "regex-email-fix",
+      "split": "train",
+      "provenance": "seed",
+      "added_in_version": "v1",
+      "realistic": true,
+      "status": "active",
+      "tags": ["regex", "debugging"],
+      "notes": "실제 로그에서 자주 나온 정규식 디버깅 요청. 짧은 입력이라 인라인 사용.",
+      "input": "이 정규식이 이메일을 제대로 매칭하지 못합니다: ^\\w+@\\w+$ — 무엇이 문제이고 어떻게 고치나요?",
+      "rubric": [
+        "TLD(.com 등)와 점(.)을 처리하지 못하는 한계를 지적했는가?",
+        "동작하는 개선 정규식을 제시했는가?",
+        "코드에 없는 가짜 문제를 지어내지 않았는가?"
+      ]
+    },
+    {
+      "id": "debug-race-condition",
+      "split": "train",
+      "provenance": "failure-log",
+      "added_in_version": "v2",
+      "realistic": true,
+      "status": "active",
+      "tags": ["debugging", "concurrency"],
+      "notes": "v1 에이전트가 실전에서 음수 잔액 버그를 못 잡은 실패에서 유래. 진화(S6 가교)의 대표 사례. 코드 입력이라 input_file 사용.",
+      "input_file": "./cases/debug-race-condition.input.txt",
+      "rubric": [
+        "레이스 컨디션(check-then-act)을 진짜 원인으로 지목했는가?",
+        "락 또는 원자적 연산으로 올바르게 고쳤는가?",
+        "코드에 없는 가짜 원인을 지어내지 않았는가?",
+        "기존 withdraw 시그니처를 깨지 않았는가?",
+        "왜 그게 원인인지 한두 줄로 설명했는가?"
+      ]
+    },
+    {
+      "id": "review-sql-injection",
+      "split": "heldout",
+      "provenance": "human",
+      "added_in_version": "v1",
+      "realistic": true,
+      "status": "active",
+      "tags": ["code-review", "security"],
+      "notes": "실제 PR에서 가져온 현실 케이스 → reality-first 규칙으로 held-out 우선 배치.",
+      "input_file": "./cases/review-sql-injection.input.txt",
+      "rubric": [
+        "SQL 인젝션 취약점을 지적했는가?",
+        "파라미터 바인딩(prepared statement) 해법을 제시했는가?",
+        "심각도를 적절히(높음) 평가했는가?",
+        "존재하지 않는 문제를 날조하지 않았는가?",
+        "실제로 동작하는 수정 예시를 보였는가?"
+      ]
+    },
+    {
+      "id": "print-hello",
+      "split": "train",
+      "provenance": "bootstrap",
+      "added_in_version": "v1",
+      "realistic": false,
+      "status": "retired",
+      "tags": ["trivial"],
+      "notes": "모든 버전이 통과 → 변별력 0. v2에서 은퇴(채점 제외, 기록은 보존). 골든셋 레벨의 '빼기' 예시.",
+      "input": "파이썬으로 'hello'를 출력하세요.",
+      "rubric": ["hello를 출력하는 코드를 제시했는가?"]
+    }
+  ]
+}
