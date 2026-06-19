@@ -289,6 +289,11 @@ grade against it — that is a self-graded exam. Instead:
    split (hash).
 6. **Size gate**: refuse/​warn if `train < 5` or `heldout < 3`.
 
+**Steps 3–4 win or lose most of the leverage.** Consult
+**`references/golden-set-guide.md`** (a tight checklist — choosing cases that can
+*fail*, and writing crisp, guard, and orthogonal yes/no criteria) while helping the
+human curate inputs and author the rubric.
+
 ## Human batch approval (end of run)
 
 This loop is semi-autonomous: it does **not** ask the human to approve every
@@ -393,3 +398,6 @@ that don't beat noise are discarded and every 3rd turn prunes — *but only if
 - **`references/loop-concepts.md`** — the principles behind the loop (why measure
   first, why one change, why proposer ≠ grader, failure log, subtraction, human
   as coach).
+- **`references/golden-set-guide.md`** — agent checklist for building a
+  *discriminating* golden set (case selection + rubric craft); consult at cold start
+  and when evolving the set.
