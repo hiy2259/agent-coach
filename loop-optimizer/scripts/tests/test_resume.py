@@ -161,6 +161,59 @@ class TestScoreCarryOver(unittest.TestCase):
         self.assertEqual(s["phase"], "graded")
 
 
+class TestGraderProvenance(unittest.TestCase):
+    """Additive grader-provenance field for the advisory cross-family drift WARN.
+
+    A grader swap is invisible today (state carries golden_set_version + split_hash
+    but no grader field; split_goldenset op=verify can't catch a swapped ruler).
+    init_state now records grader_version_id alongside the other provenance so the
+    non-blocking trust-time WARN can surface it. These tests pin that the field is
+    present, defaults to None, is settable, and -- critically -- that adding it did
+    NOT change any decision / transition / counter behaviour (the verified core).
+    """
+
+    def test_init_state_has_grader_field_default_none(self):
+        s = init_state()
+        self.assertIn("grader_version_id", s)
+        self.assertIsNone(s["grader_version_id"])
+
+    def test_init_state_records_grader_version_id(self):
+        s = init_state(grader_version_id="claude-opus-4-8")
+        self.assertEqual(s["grader_version_id"], "claude-opus-4-8")
+
+    def test_init_state_records_alongside_other_provenance(self):
+        # Sits next to the existing orchestrator-populated provenance, unchanged.
+        s = init_state(
+            golden_set_version="v2",
+            split_hash="sha256:abc",
+            grader_version_id="claude-opus-4-8",
+        )
+        self.assertEqual(s["golden_set_version"], "v2")
+        self.assertEqual(s["split_hash"], "sha256:abc")
+        self.assertEqual(s["grader_version_id"], "claude-opus-4-8")
+
+    def test_grader_field_does_not_perturb_decisions(self):
+        # The provenance field must be inert w.r.t. the state machine: a turn driven
+        # to MERGE behaves identically whether or not grader_version_id is set.
+        s_no = init_state()
+        s_no, _ = record_decision(s_no, turn=1, decision="MERGE")
+        s_yes = init_state(grader_version_id="claude-opus-4-8")
+        s_yes, _ = record_decision(s_yes, turn=1, decision="MERGE")
+        self.assertEqual(s_no["turn"], s_yes["turn"])
+        self.assertEqual(s_no["no_progress_count"], s_yes["no_progress_count"])
+        self.assertEqual(s_no["phase"], s_yes["phase"])
+        # The field rides along untouched by the decision.
+        self.assertEqual(s_yes["grader_version_id"], "claude-opus-4-8")
+
+    def test_grader_field_does_not_perturb_stop(self):
+        # should_stop must ignore the provenance field entirely.
+        s = init_state(grader_version_id="claude-opus-4-8")
+        s["turn"] = 3
+        stop, reason = should_stop(s, n_turns=10, no_progress_k=3, max_usd_total=20.0)
+        self.assertFalse(stop)
+        self.assertIsNone(reason)
+
+
 class TestStopConditions(unittest.TestCase):
     def test_max_turns(self):
         s = init_state()

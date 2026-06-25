@@ -253,6 +253,7 @@ Drives idempotent resume (`scripts/resume.py`).
 | `phase` | `"proposed"` \| `"applied"` \| `"graded"` \| `"merged"` \| `"discarded"` | Last completed phase in the turn state machine (resume re-enters from here) |
 | `golden_set_version` | string | Version in effect (**orchestrator-populated**, informational — `resume.py` does not write this; F-14) |
 | `split_hash` | string | Hash of active cases + split (**orchestrator-populated**; the authoritative within-run freeze check is `split_goldenset.py op=verify`, re-run every turn — `resume.py` does not write this; F-14) |
+| `grader_version_id` | string \| null | Pinned id of the grader (ruler) in effect (**orchestrator-populated**, like `golden_set_version`/`split_hash` — `resume.py` records what it is handed and never derives it). Consumed only by the advisory, non-blocking cross-family drift WARN (`scripts/check_cross_validation.py`); a swapped ruler leaves `split_hash` unchanged, so recording this is what lets the WARN surface it at verdict-trust time. |
 | `current_prompt_hash` | string | Hash of `prompt.current.md`; used to tell whether a promote already happened (idempotent resume). Written by `resume.py op=promote_done`. |
 | `no_progress_count` | number | Consecutive turns without MERGE/SUB_KEEP (stop at `no_progress_k`) |
 | `candidate_pending` | boolean | Is a candidate staged but not yet resolved? |
@@ -276,6 +277,7 @@ Drives idempotent resume (`scripts/resume.py`).
   "phase": "graded",
   "golden_set_version": "v2",
   "split_hash": "sha256:3f2a9c0b...c91",
+  "grader_version_id": "2026-06-19",
   "current_prompt_hash": "sha256:8b1d77e2...4e7",
   "no_progress_count": 0,
   "candidate_pending": true,

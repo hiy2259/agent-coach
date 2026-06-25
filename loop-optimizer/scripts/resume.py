@@ -3,8 +3,9 @@
 
 ``state.json`` is the single mutable resume record (schema, brief §4.6):
   {
-    turn, phase, golden_set_version, split_hash, current_prompt_hash,
-    no_progress_count, candidate_pending, budget_spent_usd, ts
+    turn, phase, golden_set_version, split_hash, grader_version_id,
+    current_prompt_hash, no_progress_count, candidate_pending,
+    budget_spent_usd, ts
   }
   phase in {proposed, applied, graded, merged, discarded}
 
@@ -81,13 +82,33 @@ def _now_iso():
     return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
 
-def init_state(golden_set_version=None, split_hash=None, current_prompt_hash=None):
-    """A fresh turn-1, nothing-done-yet state."""
+def init_state(golden_set_version=None, split_hash=None, current_prompt_hash=None,
+               grader_version_id=None):
+    """A fresh turn-1, nothing-done-yet state.
+
+    VERIFIED-CORE TOUCH JUSTIFICATION (project rule -- touch the verified/tested
+    core ONLY to close a principle violation or add real-consumer value, not
+    because "additive is cheap"). ``grader_version_id`` is recorded for a concrete
+    consumer at the dogfood-trust moment: today a grader swap is INVISIBLE to the
+    run -- state.json carries golden_set_version + split_hash but no grader field,
+    and split_goldenset.py op=verify can only catch golden-set mutation (swapping
+    the ruler leaves split_hash unchanged -> returns valid:true), so a re-graded
+    run with a different ruler looks clean. Recording the grader's pinned
+    version_id alongside the existing provenance lets the NON-BLOCKING trust-time
+    WARN (check_cross_validation.py) surface "the ruler changed since the last
+    cross-family check" to the human BEFORE they trust a verdict. This is a pure
+    additive provenance field: it does NOT alter any decision, phase transition,
+    counter, or stop condition -- the merge gate (S2) is untouched.
+    """
     return {
         "turn": 1,
         "phase": None,
         "golden_set_version": golden_set_version,
         "split_hash": split_hash,
+        # Pinned id of the grader (ruler) in effect. Orchestrator-populated, like
+        # golden_set_version/split_hash (F-14): resume.py records what it is handed
+        # and never derives it. Consumed only by the advisory trust-time WARN.
+        "grader_version_id": grader_version_id,
         "current_prompt_hash": current_prompt_hash,
         "no_progress_count": 0,
         "candidate_pending": False,

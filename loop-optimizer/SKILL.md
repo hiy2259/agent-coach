@@ -326,6 +326,25 @@ prior version's `history.jsonl` / `failure-log.jsonl` to `archive/<version>/`
 (F-21) so logs don't accrete across versions and each version's trail stays
 self-contained.
 
+**Record-only cross-family drift WARN (advisory — not a gate, not a safety net).**
+A single grader is one ruler with one set of blind spots. The decorrelated
+sanity check for that is the **dual-judge cross-family re-check** (grade the same
+outputs with a second judge from a different model family and compare) — a
+**manual** action the human runs, logged in
+`references/baselines/dual-judge-ledger.jsonl`. To make a stale check visible,
+`scripts/check_cross_validation.py` reads that ledger and emits a **non-blocking
+WARN** when the current `grader_version_id` / `golden_set_version` / `split_hash`
+differ from the last recorded check (or none exists). It is purely a surfacing
+aid at the moment you are about to **trust a dogfood verdict**: run it then, and
+if it warns, know the cross-family check has not covered this ruler/set/split.
+Be clear about what it is **not**: it does **not** block, does **not** feed the
+merge gate (S2), and is **not** a safety net — it cannot tell you the grader is
+*wrong*, only that the cross-check is *stale*. Closing the loop still requires the
+human to run the cross-family re-check (the dual-judge tripwire). A *blocking*
+gate is intentionally **deferred** until a drift detector is validated on a
+de-saturated diagnostic set; building one against today's near-ceiling set would
+be premature (see `.omc/specs/loop-optimizer-dualjudge-diagnostic.md`).
+
 ## State layout — `loop/<target>/`
 
 Everything is human-readable and resumable:
