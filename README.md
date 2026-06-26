@@ -1,10 +1,10 @@
-# Loop Optimizer
+# Agent Coach
 
 > **Iteratively improve a prompt, skill, or instruction file with a *measured* self-improvement loop — never on vibes.**
 
 *Read this in another language: [한국어](./README.ko.md)*
 
-`loop-optimizer` is a [Claude Code](https://docs.claude.com/en/docs/claude-code) skill (it lives in [`loop-optimizer/`](./loop-optimizer)) that tunes a target prompt/skill/instruction file the way a good coach trains an athlete:
+`agent-coach` is a [Claude Code](https://docs.claude.com/en/docs/claude-code) skill (it lives in [`agent-coach/`](./agent-coach)) that tunes a target prompt/skill/instruction file the way a good coach trains an athlete:
 
 > **measure → change ONE thing → measure again → keep it only if the score really went up.**
 
@@ -39,13 +39,13 @@ Its governing rule is **"no evolution without measurement."** You never change t
 2. **Overfitting.** A change can memorize the quirks of the cases you optimized against and quietly destroy generalization — the classic "98% on train, broken in production" trap.
 3. **The self-graded exam.** Ask a model "did your change help?" and, having just produced it, it is primed to say yes. A player must not referee their own game.
 
-`loop-optimizer` is built to remove each of these failure modes mechanically, so that "better" is an **observed quantity** rather than an opinion.
+`agent-coach` is built to remove each of these failure modes mechanically, so that "better" is an **observed quantity** rather than an opinion.
 
 ---
 
 ## What makes it different
 
-| Most "AI improves a prompt" tools | `loop-optimizer` |
+| Most "AI improves a prompt" tools | `agent-coach` |
 |---|---|
 | The model decides if a change helped | **Deterministic code** decides every merge — a fixed inequality, not a judgment |
 | One score, optimize against it | **Train + held-out split**; held-out is the generalization guard, and overfitting triggers a **HALT** |
@@ -61,7 +61,7 @@ Its governing rule is **"no evolution without measurement."** You never change t
 
 ### The four actors
 
-The single most important structural rule: **the model that proposes a change is not the model that grades it, and neither is the model that runs the target.** Each actor is a separate Claude Code subagent with its own prompt under [`loop-optimizer/agents/`](./loop-optimizer/agents), so each starts from a clean context and the separation is *real*, not nominal.
+The single most important structural rule: **the model that proposes a change is not the model that grades it, and neither is the model that runs the target.** Each actor is a separate Claude Code subagent with its own prompt under [`agent-coach/agents/`](./agent-coach/agents), so each starts from a clean context and the separation is *real*, not nominal.
 
 | Actor | Job | Notes |
 |---|---|---|
@@ -96,7 +96,7 @@ The loop runs up to **N** turns (default 10). Each turn changes **at most one th
 
 ### The merge gate (the heart)
 
-[`score_compare.py`](./loop-optimizer/scripts/score_compare.py) — not a model — makes the decision. A change **MERGES only when all of these hold:**
+[`score_compare.py`](./agent-coach/scripts/score_compare.py) — not a model — makes the decision. A change **MERGES only when all of these hold:**
 
 ```
 train_after   >  train_before                      (a strictly positive gain — a +0.0 tie never merges)
@@ -110,7 +110,7 @@ Otherwise:
 - If `train` rises but `heldout` falls by **more than** `eps_heldout` → **HALT** (overfitting: the change memorized train and broke generalization). HALT is terminal.
 - Otherwise → **DISCARD** (no real gain; the addition is reverted).
 
-The margins `eps_train` / `eps_heldout` are **measurement noise**, calibrated by [`calibrate_noise.py`](./loop-optimizer/scripts/calibrate_noise.py): it re-runs the Runner on fixed inputs `k_calib` times (≥5 recommended), grades each, and derives the score spread per split — floored at a small positive `min_eps` so a `+0.0` tie can never look like progress. The held-out margin is **symmetric** (`eps_heldout` on both the merge and HALT side), so ordinary held-out noise does not trigger false HALTs.
+The margins `eps_train` / `eps_heldout` are **measurement noise**, calibrated by [`calibrate_noise.py`](./agent-coach/scripts/calibrate_noise.py): it re-runs the Runner on fixed inputs `k_calib` times (≥5 recommended), grades each, and derives the score spread per split — floored at a small positive `min_eps` so a `+0.0` tie can never look like progress. The held-out margin is **symmetric** (`eps_heldout` on both the merge and HALT side), so ordinary held-out noise does not trigger false HALTs.
 
 **Check the gate is satisfiable first.** Pass the baseline scores to `calibrate_noise.py`. If it returns `gate_satisfiable: false` — i.e. `eps_train ≥ 1 − baseline_train`, so *no* change could ever clear the gate (this also covers the saturated case where the baseline is already ≈1.0) — the loop **STOPS and surfaces the warning** instead of burning N turns. The fix is a bigger / harder golden set or a higher `k_calib`, not more proposing.
 
@@ -133,7 +133,7 @@ A plateau below your hoped-for score is **information, not failure**: it means t
 
 ## The seven safety invariants (S1–S7)
 
-These are the reason the skill exists. Each removes one specific way "self-improvement" silently degrades into evolution-without-measurement. Full statements: [`references/safety-invariants.md`](./loop-optimizer/references/safety-invariants.md).
+These are the reason the skill exists. Each removes one specific way "self-improvement" silently degrades into evolution-without-measurement. Full statements: [`references/safety-invariants.md`](./agent-coach/references/safety-invariants.md).
 
 | # | Invariant | Prevents | Enforced by |
 |---|---|---|---|
@@ -164,14 +164,14 @@ It validates the config, measures a **baseline** on train + held-out, runs the g
 Before trusting any run, verify the code that makes every irreversible decision:
 
 ```bash
-python3 loop-optimizer/scripts/tests/run.py          # 197 tests, stdlib only
-# or:  python3 -m pytest loop-optimizer/scripts/tests/
+python3 agent-coach/scripts/tests/run.py          # 197 tests, stdlib only
+# or:  python3 -m pytest agent-coach/scripts/tests/
 ```
 
 Every script reads its JSON payload on **stdin** (or a file-path arg), never as an inline argv string:
 
 ```bash
-printf '%s' '<json>' | python3 loop-optimizer/scripts/score_compare.py
+printf '%s' '<json>' | python3 agent-coach/scripts/score_compare.py
 ```
 
 ---
@@ -192,7 +192,7 @@ Korean mirrors: [`golden-set.ko.md`](./docs/golden-set.ko.md) · [`run-config.ko
 
 ## Repository layout
 
-The README lives at the project root; the skill itself is in `loop-optimizer/`, with copy-paste-ready inputs in `examples/`.
+The README lives at the project root; the skill itself is in `agent-coach/`, with copy-paste-ready inputs in `examples/`.
 
 ```
 .
@@ -210,7 +210,7 @@ The README lives at the project root; the skill itself is in `loop-optimizer/`, 
 │       ├── run-config.example.json
 │       ├── golden-set/
 │       └── loop-state/
-└── loop-optimizer/                    # The skill
+└── agent-coach/                    # The skill
     ├── SKILL.md                       #   the skill contract Claude Code loads (start here)
     ├── agents/                        #   the four isolated actors (one prompt each)
     │   ├── runner.md                  #     executes the target (sandboxed)
@@ -244,7 +244,7 @@ The per-run working state lives in `loop/<target>/` and is fully human-readable 
 
 ## Bundled scripts
 
-Code makes every irreversible decision; the model only generates and grades. All scripts are under [`loop-optimizer/scripts/`](./loop-optimizer/scripts).
+Code makes every irreversible decision; the model only generates and grades. All scripts are under [`agent-coach/scripts/`](./agent-coach/scripts).
 
 | Step | Script | Role |
 |---|---|---|
@@ -261,7 +261,7 @@ Code makes every irreversible decision; the model only generates and grades. All
 
 ## Requirements
 
-- **Python ≥ 3.8** for `loop-optimizer/scripts/` — **standard library only**, no third-party packages.
+- **Python ≥ 3.8** for `agent-coach/scripts/` — **standard library only**, no third-party packages.
 - **Claude Code** (subagents) — to keep the four actors genuinely isolated, each running from a clean context.
 
 ---

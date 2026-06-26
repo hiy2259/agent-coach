@@ -43,15 +43,15 @@ necessary, not sufficient.
 Before trusting any run, verify the code that makes every irreversible decision:
 
 ```bash
-python3 loop-optimizer/scripts/tests/run.py          # 197 tests, stdlib only
-# or:  python3 -m pytest loop-optimizer/scripts/tests/
+python3 agent-coach/scripts/tests/run.py          # 197 tests, stdlib only
+# or:  python3 -m pytest agent-coach/scripts/tests/
 ```
 
 Every script reads its JSON payload on **stdin** (or a file-path arg) — never as an
 inline argv string:
 
 ```bash
-printf '%s' '<json>' | python3 loop-optimizer/scripts/score_compare.py
+printf '%s' '<json>' | python3 agent-coach/scripts/score_compare.py
 ```
 
 (Run scripts from the repository root — the paths are relative to the project root,
@@ -62,7 +62,7 @@ not to this `docs/` page.)
 ## Usage by scenario
 
 The three scenario types below mirror the skill's own end-to-end evals in
-[`../loop-optimizer/evals/evals.json`](../loop-optimizer/evals/evals.json).
+[`../agent-coach/evals/evals.json`](../agent-coach/evals/evals.json).
 
 ### Scenario 1 — Warm start (you already have a golden set)
 
@@ -115,7 +115,7 @@ Every run is resumable. If one is interrupted, `state.json` records the turn and
 phase, and `resume.py` re-enters **idempotently** from the last completed step — a
 merge is never double-applied.
 
-> "Resume the loop-optimizer run for `summarizer.md` where it left off."
+> "Resume the agent-coach run for `summarizer.md` where it left off."
 
 A sample `state.json` (alongside `history.jsonl` and `failure-log.jsonl`) ships at
 [`../examples/en/loop-state/`](../examples/en/loop-state) so you can see exactly what
@@ -145,7 +145,7 @@ The loop stops at the human-curation gate and asks you to approve inputs and wri
 rubric — it will not silently finalize a set and optimize against it. The craft of
 *what* to curate into that set is its own page: see
 [`golden-set.md`](./golden-set.md), and
-[`../loop-optimizer/agents/bootstrapper.md`](../loop-optimizer/agents/bootstrapper.md)
+[`../agent-coach/agents/bootstrapper.md`](../agent-coach/agents/bootstrapper.md)
 for what the Bootstrapper does and doesn't do.
 
 ---
@@ -176,7 +176,7 @@ a cap is hit.
   (the highest-leverage thing you own).
 - [`run-config.md`](./run-config.md) — every `run-config.json` field, and the
   pre-flight that enforces honest measurement.
-- [`../loop-optimizer/references/safety-invariants.md`](../loop-optimizer/references/safety-invariants.md)
+- [`../agent-coach/references/safety-invariants.md`](../agent-coach/references/safety-invariants.md)
   — S1–S7: why the merge gate, the held-out HALT, and staging exist.
-- [`../loop-optimizer/references/loop-concepts.md`](../loop-optimizer/references/loop-concepts.md)
+- [`../agent-coach/references/loop-concepts.md`](../agent-coach/references/loop-concepts.md)
   — the principles behind every design choice.

@@ -10,7 +10,7 @@
 이 페이지는 `run-config.json`의 필드별 레퍼런스와 그것을 강제하는 사전 점검(pre-flight)을
 다룹니다. 이 설정이 실행 대상으로 삼는 *시험*은 [`golden-set.ko.md`](./golden-set.ko.md),
 종단간 실행은 [`running.ko.md`](./running.ko.md), 기준이 되는 JSON 스키마는
-[`../loop-optimizer/references/data-formats.md`](../loop-optimizer/references/data-formats.md)를
+[`../agent-coach/references/data-formats.md`](../agent-coach/references/data-formats.md)를
 보세요.
 
 ---
@@ -129,7 +129,7 @@
   `k_calib < 5` · `grader.version_id` 누락 · `budget` 블록 누락.
 
 ```bash
-printf '%s' '{"config_path":"./run-config.json"}' | python3 loop-optimizer/scripts/validate_config.py
+printf '%s' '{"config_path":"./run-config.json"}' | python3 agent-coach/scripts/validate_config.py
 ```
 
 (스크립트는 위 예시처럼 저장소 루트에서 실행하세요 — 경로는 이 `docs/` 페이지가 아니라 프로젝트
@@ -143,7 +143,7 @@ printf '%s' '{"config_path":"./run-config.json"}' | python3 loop-optimizer/scrip
   지렛대가 있는 곳.
 - [`running.ko.md`](./running.ko.md) — 종단간 실행: 검증 → 베이스라인 → 루프 → 배치
   커밋/되돌리기, 그리고 콜드 스타트와 재개.
-- [`../loop-optimizer/references/data-formats.md`](../loop-optimizer/references/data-formats.md)
+- [`../agent-coach/references/data-formats.md`](../agent-coach/references/data-formats.md)
   — 기준이 되는 `run-config.json` 스키마, 필드별.
-- [`../loop-optimizer/references/safety-invariants.md`](../loop-optimizer/references/safety-invariants.md)
+- [`../agent-coach/references/safety-invariants.md`](../agent-coach/references/safety-invariants.md)
   — S1–S7, 특히 S5(행위자 분리)와 S7(실행자 분산에서 나온 노이즈, 채점자 temperature 0).

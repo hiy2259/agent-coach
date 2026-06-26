@@ -45,4 +45,4 @@ The cross-session idx3 disagreement is real, but its backstop is the
 record-only drift WARN (`scripts/check_cross_validation.py`) shipped 2026-06-25
 is its first, code-safe step; the comparator body remains on deliberate HOLD
 pending a de-saturated diagnostic set
-(see `.omc/specs/loop-optimizer-dualjudge-diagnostic.md`).
+(see `.omc/specs/agent-coach-dualjudge-diagnostic.md`).

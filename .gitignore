@@ -9,6 +9,7 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.understand-anything/
 .venv/
 venv/
 
@@ -18,7 +19,7 @@ venv/
 *~
 
 # ── Build output ─────────────────────────────────────────────────────
-# Packaged skill, rebuilt deterministically from loop-optimizer/ via
+# Packaged skill, rebuilt deterministically from agent-coach/ via
 # skill-creator's package_skill.py (verified byte-identical on rebuild).
 # Delete this line if you'd rather commit the .skill as a release artifact.
 dist/
@@ -31,4 +32,4 @@ loop-engineering-입문가이드.md
 loop-optimizer-2차-감사보고서.md
 loop-optimizer-audit-report.md
 
-loop-optimizer-workspace/
+agent-coach-workspace/

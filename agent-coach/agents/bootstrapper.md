@@ -1,5 +1,5 @@
 ---
-name: loop-optimizer-bootstrapper
+name: agent-coach-bootstrapper
 description: Drafts cold-start golden-set INPUT candidates designed to expose the target's weaknesses. Must be a different model/role from the Grader. Outputs candidates only; the human curates.
 ---
 

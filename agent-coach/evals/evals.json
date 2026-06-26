@@ -1,6 +1,6 @@
 {
-  "skill_name": "loop-optimizer",
-  "_note": "Level-2 evals: do the SKILL itself behave correctly end-to-end? Distinct from the level-1 golden set the skill uses internally. Fixtures live in ../loop-optimizer-workspace/fixtures/.",
+  "skill_name": "agent-coach",
+  "_note": "Level-2 evals: do the SKILL itself behave correctly end-to-end? Distinct from the level-1 golden set the skill uses internally. Fixtures live in ../agent-coach-workspace/fixtures/.",
   "evals": [
     {
       "id": 0,
@@ -8,9 +8,9 @@
       "prompt": "I've got a meeting-minutes summarizer at summarizer.md and a set of example meetings with yes/no grading criteria in golden-set.json (train and held-out are already marked). Tune the summarizer so it scores better on those cases — but measure before you change anything, and only keep a change if it genuinely helps. Don't overfit to the training examples. Model and loop settings are in run-config.json.",
       "expected_output": "A measured loop: baseline scored, then per-turn one-change proposals gated by code; at least one real improvement MERGED; live summarizer.md left untouched (staging only); a diff + history.jsonl + failure-log.jsonl presented for the human to commit or revert.",
       "files": [
-        "../loop-optimizer-workspace/fixtures/summarizer/summarizer.md",
-        "../loop-optimizer-workspace/fixtures/summarizer/golden-set.json",
-        "../loop-optimizer-workspace/fixtures/summarizer/run-config.json"
+        "../agent-coach-workspace/fixtures/summarizer/summarizer.md",
+        "../agent-coach-workspace/fixtures/summarizer/golden-set.json",
+        "../agent-coach-workspace/fixtures/summarizer/run-config.json"
       ],
       "expectations": [
         "Measured a baseline (ran the target + graded it on train and held-out) BEFORE proposing any change — history.jsonl turn 1 records train_before and heldout_before.",
@@ -28,9 +28,9 @@
       "prompt": "classify.md is my customer-support ticket classifier and it keeps mislabeling things. Make it better. I don't have a labeled test set — there's just a dump of raw inbox lines in seed-logs.txt. Settings are in run-config.json.",
       "expected_output": "Detects there is no golden set, has the Bootstrapper draft candidate INPUTS, runs the target once to expose failures, then STOPS to ask the human to curate inputs and write the yes/no rubric — it does not invent a rubric, self-grade, and silently optimize.",
       "files": [
-        "../loop-optimizer-workspace/fixtures/classify/classify.md",
-        "../loop-optimizer-workspace/fixtures/classify/seed-logs.txt",
-        "../loop-optimizer-workspace/fixtures/classify/run-config.json"
+        "../agent-coach-workspace/fixtures/classify/classify.md",
+        "../agent-coach-workspace/fixtures/classify/seed-logs.txt",
+        "../agent-coach-workspace/fixtures/classify/run-config.json"
       ],
       "expectations": [
         "Detected that no golden set exists (run-config points at a missing golden-set.json) and entered the cold-start path instead of scoring against a nonexistent set.",
@@ -47,9 +47,9 @@
       "prompt": "Tune my job-posting field extractor extract.md against the golden set in golden-set.json. The big problem: it leaves salary_range null way too often — I want it to fill that in. Settings are in run-config.json.",
       "expected_output": "The natural 'always fill salary' change raises train but breaks held-out (postings with no stated salary), so the code HALTs instead of merging; the overfitting change never reaches the target; the halted attempt + a candidate_input are logged.",
       "files": [
-        "../loop-optimizer-workspace/fixtures/extract/extract.md",
-        "../loop-optimizer-workspace/fixtures/extract/golden-set.json",
-        "../loop-optimizer-workspace/fixtures/extract/run-config.json"
+        "../agent-coach-workspace/fixtures/extract/extract.md",
+        "../agent-coach-workspace/fixtures/extract/golden-set.json",
+        "../agent-coach-workspace/fixtures/extract/run-config.json"
       ],
       "expectations": [
         "Measured a baseline on train and held-out before changing the target.",

@@ -1,5 +1,5 @@
 ---
-name: loop-optimizer
+name: agent-coach
 description: >-
   Iteratively improve a prompt, skill, or instruction file via a measured
   self-improvement loop. It runs the target against a human-curated golden set
@@ -18,7 +18,7 @@ description: >-
 compatibility: Requires python3 >=3.8 (standard library only) for scripts/; requires subagents (Claude Code) to keep the four actors isolated.
 ---
 
-# Loop Optimizer
+# Agent Coach
 
 Improve a target prompt/skill/instruction file the way a good coach trains an
 athlete: **measure → change ONE thing → measure again → keep it only if the

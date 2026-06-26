@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Run all loop-optimizer deterministic-core unit tests (stdlib unittest only).
+"""Run all agent-coach deterministic-core unit tests (stdlib unittest only).
 
 Usage:
     python3 scripts/tests/run.py          # run everything, verbose

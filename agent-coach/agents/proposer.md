@@ -1,5 +1,5 @@
 ---
-name: loop-optimizer-proposer
+name: agent-coach-proposer
 description: Proposes EXACTLY ONE change to the target as the Change contract; reads the failure log first to avoid re-proposing known failures.
 ---
 

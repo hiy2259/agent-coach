@@ -1,5 +1,5 @@
 ---
-name: loop-optimizer-runner
+name: agent-coach-runner
 description: Executes the target prompt on one golden input and returns only the target's output. Isolated and unprivileged.
 ---
 

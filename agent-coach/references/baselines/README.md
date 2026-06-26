@@ -4,7 +4,7 @@
 
 An **append-only, record-only** ledger of when the **dual-judge cross-family
 check** (the manual tripwire described in SKILL.md "Golden set is frozen…" and
-`.omc/specs/loop-optimizer-dualjudge-diagnostic.md`) last ran, and under what
+`.omc/specs/agent-coach-dualjudge-diagnostic.md`) last ran, and under what
 provenance. It exists so that, at the moment a human is about to **trust a
 dogfood verdict**, a small advisory helper can answer: *"has the decorrelated
 second-judge sanity check ever run against THIS ruler + THIS golden set + THIS
@@ -38,4 +38,4 @@ history). The advisory WARN compares the current run's provenance against the
 - `2026-06-23` — grader `claude-opus-4-8`, goldenset `v2`, verdict `hold`.
   47/48 (97.9%) Claude-vs-GPT agreement; the single disagreement adjudicated as
   an ambiguous rubric, not a judge blind spot. Full write-up:
-  `.omc/specs/loop-optimizer-dualjudge-diagnostic.md`.
+  `.omc/specs/agent-coach-dualjudge-diagnostic.md`.

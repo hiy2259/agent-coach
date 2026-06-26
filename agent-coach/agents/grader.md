@@ -1,5 +1,5 @@
 ---
-name: loop-optimizer-grader
+name: agent-coach-grader
 description: Scores one Runner output against a yes/no rubric, one criterion at a time, and emits the Score contract. Temperature 0, version-pinned.
 ---
 

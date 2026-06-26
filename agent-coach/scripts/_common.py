@@ -1,4 +1,4 @@
-"""Shared deterministic helpers for the loop-optimizer scripts.
+"""Shared deterministic helpers for the agent-coach scripts.
 
 Standard library only. No model calls, no network, no hidden state.
 

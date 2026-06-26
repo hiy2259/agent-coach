@@ -9,9 +9,9 @@
 이 페이지는 그 craft를 다룹니다: 케이스를 어떻게 고르고, 품질을 실제로 측정하는 루브릭 기준을
 어떻게 쓰고, 어떻게 분할하고, 셋을 어떻게 키우는지, 그리고 루프 전체를 조용히 무너뜨리는
 안티패턴들. 정확한 JSON 형태는
-[`../loop-optimizer/references/data-formats.md`](../loop-optimizer/references/data-formats.md),
+[`../agent-coach/references/data-formats.md`](../agent-coach/references/data-formats.md),
 안전성의 근거는
-[`../loop-optimizer/references/safety-invariants.md`](../loop-optimizer/references/safety-invariants.md)를
+[`../agent-coach/references/safety-invariants.md`](../agent-coach/references/safety-invariants.md)를
 보세요.
 
 ---
@@ -65,7 +65,7 @@
 **후보만** 초안 작성합니다. 당신이 승인하고, 가지치기하고, 그것이 놓친 어려운 케이스를 추가합니다.
 AI가 초안한 셋에 고무도장만 찍는 것은 이 방어의 약한 버전입니다: 모델과 케이스 작성자가 사각지대를
 공유하면, 루프는 결국 자기 일관적인 환상을 향해 최적화하게 됩니다.
-([`../loop-optimizer/agents/bootstrapper.md`](../loop-optimizer/agents/bootstrapper.md) 참고.)
+([`../agent-coach/agents/bootstrapper.md`](../agent-coach/agents/bootstrapper.md) 참고.)
 
 ---
 
@@ -192,7 +192,7 @@ AI가 초안한 셋에 고무도장만 찍는 것은 이 방어의 약한 버전
 
 대상: **회의록 요약기**(`./summarizer.md`). 케이스 두 개 — 분명한 `train` 하나, 현실적인
 `heldout` 함정 하나 — 가 케이스 선택, 부정-가드 축, 분할 근거를 보여줍니다. (전체 스키마:
-[`../loop-optimizer/references/data-formats.md`](../loop-optimizer/references/data-formats.md).)
+[`../agent-coach/references/data-formats.md`](../agent-coach/references/data-formats.md).)
 
 ```json
 {
@@ -256,7 +256,7 @@ AI가 초안한 셋에 고무도장만 찍는 것은 이 방어의 약한 버전
   실행하는지, 그리고 채점을 정직하게 유지하는 사전 점검(채점자 temperature 0과 행위자 분리 포함).
 - [`running.ko.md`](./running.ko.md) — 종단간 실행: 검증 → 베이스라인 → 루프 → 배치
   커밋/되돌리기.
-- [`../loop-optimizer/references/data-formats.md`](../loop-optimizer/references/data-formats.md)
+- [`../agent-coach/references/data-formats.md`](../agent-coach/references/data-formats.md)
   — 기준이 되는 `golden-set.json` 스키마, 필드별.
-- [`../loop-optimizer/references/safety-invariants.md`](../loop-optimizer/references/safety-invariants.md)
+- [`../agent-coach/references/safety-invariants.md`](../agent-coach/references/safety-invariants.md)
   — S1–S7, S5(사람이 소유하는 출처 + 크기 게이트) 포함.
