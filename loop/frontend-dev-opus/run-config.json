@@ -1,0 +1,11 @@
+{
+  "target": "./prompt.current.md",
+  "golden_set": "./golden-set.json",
+  "runner":      { "model": "claude-opus-4-8", "temperature": 1.0, "max_output_tokens": 4096 },
+  "grader":      { "model": "claude-opus-4-8", "temperature": 0, "version_id": "2026-06-26" },
+  "proposer":    { "model": "claude-sonnet-4-6", "temperature": 0.3 },
+  "calibration": { "k_calib": 5 },
+  "loop":        { "n_turns": 8, "no_progress_k": 3, "subtraction_every": 3 },
+  "budget":      { "max_usd_total": 120.0, "max_usd_per_turn": 20.0 },
+  "tools":       { "mode": "none" }
+}
