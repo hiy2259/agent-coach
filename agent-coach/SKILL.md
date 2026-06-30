@@ -7,7 +7,7 @@ description: >-
   per turn, and — via deterministic code, not model judgment — merges ONLY when
   the gain beats train noise without regressing held-out beyond a symmetric
   margin, halting on overfitting. Use it whenever the user wants to optimize,
-  tune, harden, or cut the failure rate of a prompt/skill against example cases;
+  tune, harden, or cut the failure rate of a prompt/skill/agent against example cases;
   set up an eval-/golden-set-driven improvement loop; A/B-measure prompt changes
   with evidence; or "make this prompt better" measurably, not by vibes — even if
   they never say "loop". Especially trigger on golden sets, evals, rubrics,
