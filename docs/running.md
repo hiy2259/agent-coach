@@ -43,7 +43,7 @@ necessary, not sufficient.
 Before trusting any run, verify the code that makes every irreversible decision:
 
 ```bash
-python3 agent-coach/scripts/tests/run.py          # 197 tests, stdlib only
+python3 agent-coach/scripts/tests/run.py          # 219 tests, stdlib only
 # or:  python3 -m pytest agent-coach/scripts/tests/
 ```
 

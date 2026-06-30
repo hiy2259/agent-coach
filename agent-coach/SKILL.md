@@ -343,7 +343,7 @@ merge gate (S2), and is **not** a safety net — it cannot tell you the grader i
 human to run the cross-family re-check (the dual-judge tripwire). A *blocking*
 gate is intentionally **deferred** until a drift detector is validated on a
 de-saturated diagnostic set; building one against today's near-ceiling set would
-be premature (see `.omc/specs/loop-optimizer-dualjudge-diagnostic.md`).
+be premature (see `.omc/specs/agent-coach-dualjudge-diagnostic.md`).
 
 ## State layout — `loop/<target>/`
 

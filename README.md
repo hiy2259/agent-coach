@@ -164,7 +164,7 @@ It validates the config, measures a **baseline** on train + held-out, runs the g
 Before trusting any run, verify the code that makes every irreversible decision:
 
 ```bash
-python3 agent-coach/scripts/tests/run.py          # 197 tests, stdlib only
+python3 agent-coach/scripts/tests/run.py          # 219 tests, stdlib only
 # or:  python3 -m pytest agent-coach/scripts/tests/
 ```
 
@@ -226,8 +226,9 @@ The README lives at the project root; the skill itself is in `agent-coach/`, wit
     │   ├── calibrate_noise.py         #     eps_train / eps_heldout + gate_satisfiable
     │   ├── split_goldenset.py         #     classify state + split & freeze the set
     │   ├── resume.py                  #     idempotent resume after interruption
+    │   ├── check_cross_validation.py  #     advisory cross-family drift WARN (non-blocking, not a gate)
     │   ├── _common.py                 #     shared helpers (stdin payload, hashing)
-    │   └── tests/                     #     197 tests over the core (run.py)
+    │   └── tests/                     #     219 tests over the core (run.py)
     ├── references/                    #   the "why" and the exact contracts
     │   ├── loop-concepts.md           #     principles behind every design choice
     │   ├── safety-invariants.md       #     S1–S7 in full

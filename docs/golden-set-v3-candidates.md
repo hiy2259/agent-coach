@@ -1,5 +1,7 @@
 # Golden-set v3 candidates — DEFERRED (recorded per panel review 2026-06-25)
 
+> *한국어: [`golden-set-v3-candidates.ko.md`](./golden-set-v3-candidates.ko.md)*
+
 The dogfood golden set stays **frozen at v2**. Nothing here is applied. Each
 candidate records the reason it is NOT applied now, so a future maintainer does
 not re-discover the trap.

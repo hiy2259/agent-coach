@@ -41,7 +41,7 @@ QA — 결과를 실제로 *사용해 보는 것* — 은 사용자의 몫으로
 어떤 실행이든 신뢰하기 전에, 모든 되돌릴 수 없는 결정을 내리는 그 코드를 먼저 검증하세요:
 
 ```bash
-python3 agent-coach/scripts/tests/run.py          # 197개 테스트, 표준 라이브러리만 사용
+python3 agent-coach/scripts/tests/run.py          # 219개 테스트, 표준 라이브러리만 사용
 # 또는:  python3 -m pytest agent-coach/scripts/tests/
 ```
 
