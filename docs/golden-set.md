@@ -285,3 +285,7 @@ running.
   — the authoritative `golden-set.json` schema, field by field.
 - [`../agent-coach/references/safety-invariants.md`](../agent-coach/references/safety-invariants.md)
   — S1–S7, including S5 (human-owned sourcing + size gate).
+- [`../golden-set-drafter/SKILL.md`](../golden-set-drafter/SKILL.md) — a skill that
+  drafts a starting set for you (council-drafted cases + train rubrics, emitted
+  unfrozen) while leaving **every held-out rubric for you to author** — the craft
+  you apply at that gate is exactly this guide.

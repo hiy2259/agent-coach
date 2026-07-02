@@ -260,3 +260,6 @@ AI가 초안한 셋에 고무도장만 찍는 것은 이 방어의 약한 버전
   — 기준이 되는 `golden-set.json` 스키마, 필드별.
 - [`../agent-coach/references/safety-invariants.md`](../agent-coach/references/safety-invariants.md)
   — S1–S7, S5(사람이 소유하는 출처 + 크기 게이트) 포함.
+- [`../golden-set-drafter/SKILL.md`](../golden-set-drafter/SKILL.md) — 시작 셋을 대신
+  초안해 주는 스킬(회의체가 케이스와 학습 루브릭을 초안, 미동결로 방출) — 단, **홀드아웃
+  루브릭은 전부 당신이 작성**합니다. 그 관문에서 적용할 craft가 바로 이 가이드입니다.
