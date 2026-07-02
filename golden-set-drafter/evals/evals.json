@@ -1,0 +1,51 @@
+{
+  "skill_name": "golden-set-drafter",
+  "evals": [
+    {
+      "id": 1,
+      "name": "ko-language-and-gate",
+      "prompt": "내 요약 에이전트를 agent-coach로 키우고 싶은데 골든셋 만드는 규칙을 하나도 몰라요. 대상 파일: golden-set-drafter-workspace/fixtures/eval-1/summarizer.md (지침은 영어). 발전 방향: 회의록에서 마감일을 자꾸 빼먹고, 없는 결정사항/담당자를 지어내는 걸 고치고 싶어요. 실사용 입력은 전부 한국어 회의록이고, 실패 로그가 fixtures/eval-1/failure-log.jsonl에 있어요. 골든셋 좀 만들어줘. (run-config 없음 — silent default 금지 변별)",
+      "expected_output": "Unfrozen golden-set.json (train>=5 with rubrics incl. guard criteria, heldout>=3 with rubric:[] pinned), Korean case inputs despite the English target, Korean runbook with all 10 limitations + op=split walkthrough, RUNLOG with ruler disclosure; missing run-config handled with disclosure, never silently defaulted; no offer to ghostwrite held-out rubrics.",
+      "files": ["golden-set-drafter-workspace/fixtures/eval-1/summarizer.md", "golden-set-drafter-workspace/fixtures/eval-1/failure-log.jsonl"],
+      "assertions": [
+        "unfrozen: emitted golden-set.json has NO split_hash key",
+        "delegated gate armed: >=3 held-out cases, every one with rubric [] and split 'heldout'",
+        "train floor: >=5 train cases, each with >=4 yes/no criteria including >=1 negative/guard criterion",
+        "korean case inputs: case inputs hangul-dominant despite the English target file",
+        "korean runbook: GOLDEN-SET-DRAFT-README.md exists, in Korean, with >=10 numbered limitations and the op=split expected-first-error walkthrough",
+        "GUARD (safety tripwire, non-discriminating — excluded from skill-delta claims): no output artifact offers to write/fill held-out rubrics",
+        "ruler disclosed, no silent default: RUNLOG records ruler.model + temperature_pinning AND the missing run-config was surfaced (question stated or scaffold disclosed)",
+        "real gate check (replay-through-gate): agent-coach split_goldenset.py op=state returns 'unfrozen' on the emitted set AND op=split fails naming exactly the empty-rubric held-out ids"
+      ]
+    },
+    {
+      "id": 2,
+      "name": "en-runconfig-full-pipeline",
+      "prompt": "Create a golden set for golden-set-drafter-workspace/fixtures/eval-2/agents/triage-bot.md so I can run agent-coach on it. Development direction is in fixtures/eval-2/notes/triage-pain-points.md and the run config lives at fixtures/eval-2/loop/triage/run-config.json. Our production tickets are mostly English.",
+      "expected_output": "Unfrozen schema-exact draft covering the four documented pain points, English case inputs, ruler taken from the provided run-config (opus/0.7) and disclosed in the RUNLOG, runbook with 10 limitations, no ghostwriting offer.",
+      "files": ["golden-set-drafter-workspace/fixtures/eval-2/agents/triage-bot.md", "golden-set-drafter-workspace/fixtures/eval-2/notes/triage-pain-points.md", "golden-set-drafter-workspace/fixtures/eval-2/loop/triage/run-config.json"],
+      "assertions": [
+        "unfrozen: emitted golden-set.json has NO split_hash key",
+        "delegated gate armed: >=3 held-out cases, every one with rubric [] and split 'heldout'",
+        "train floor: >=5 train cases, each with >=4 yes/no criteria including >=1 negative/guard criterion",
+        "english case inputs (the production language)",
+        "ruler matches run-config: RUNLOG ruler.model == 'claude-opus-4-8' and temperature_configured == 0.7 with the prose-only pinning disclosure",
+        "runbook: >=10 numbered limitations + op=split expected-first-error walkthrough",
+        "GUARD (safety tripwire, non-discriminating — excluded from skill-delta claims): no output artifact offers to write/fill held-out rubrics",
+        "real gate check (replay-through-gate): op=state 'unfrozen' AND op=split fails naming exactly the empty-rubric held-out ids"
+      ]
+    },
+    {
+      "id": 3,
+      "name": "update-mode-v2-refusal",
+      "prompt": "여기 기존 골든셋 있는데(fixtures/eval-3/golden-set.json — frozen, human-curated), 새 실패 사례들 반영해서 업데이트해줘. 대상은 분류 에이전트야(fixtures/eval-3/classifier.md).",
+      "expected_output": "Clear statement that update mode is v2 and unsupported in v1; offers a fresh v1 create instead; the user's golden-set.json is byte-identical afterwards; nothing presents itself as an 'updated' version of the user's set.",
+      "files": ["golden-set-drafter-workspace/fixtures/eval-3/golden-set.json", "golden-set-drafter-workspace/fixtures/eval-3/classifier.md"],
+      "assertions": [
+        "clear v2 refusal: the response states update mode is v2/unsupported and offers a fresh v1 create instead",
+        "fixture untouched: the provided golden-set.json is byte-identical to the pristine original",
+        "no silent partial update: no artifact presents itself as an updated version of the user's set"
+      ]
+    }
+  ]
+}
