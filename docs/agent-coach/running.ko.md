@@ -41,15 +41,15 @@ QA — 결과를 실제로 *사용해 보는 것* — 은 사용자의 몫으로
 어떤 실행이든 신뢰하기 전에, 모든 되돌릴 수 없는 결정을 내리는 그 코드를 먼저 검증하세요:
 
 ```bash
-python3 agent-coach/scripts/tests/run.py          # 219개 테스트, 표준 라이브러리만 사용
-# 또는:  python3 -m pytest agent-coach/scripts/tests/
+python3 skills/agent-coach/scripts/tests/run.py          # 219개 테스트, 표준 라이브러리만 사용
+# 또는:  python3 -m pytest skills/agent-coach/scripts/tests/
 ```
 
 모든 스크립트는 JSON 페이로드를 **stdin**(또는 파일 경로 인자)으로 읽습니다 — 절대로 인라인 argv
 문자열이 아닙니다:
 
 ```bash
-printf '%s' '<json>' | python3 agent-coach/scripts/score_compare.py
+printf '%s' '<json>' | python3 skills/agent-coach/scripts/score_compare.py
 ```
 
 (스크립트는 저장소 루트에서 실행하세요 — 경로는 이 `docs/` 페이지가 아니라 프로젝트 루트
@@ -59,7 +59,7 @@ printf '%s' '<json>' | python3 agent-coach/scripts/score_compare.py
 
 ## 시나리오별 사용법
 
-아래 세 가지 시나리오 유형은 스킬 자체의 종단간 eval([`../agent-coach/evals/evals.json`](../agent-coach/evals/evals.json))과
+아래 세 가지 시나리오 유형은 스킬 자체의 종단간 eval([`../../skills/agent-coach/evals/evals.json`](../../skills/agent-coach/evals/evals.json))과
 대응됩니다.
 
 ### 시나리오 1 — 웜 스타트 (이미 골든셋이 있는 경우)
@@ -109,7 +109,7 @@ printf '%s' '<json>' | python3 agent-coach/scripts/score_compare.py
 > "`summarizer.md`에 대한 agent-coach 실행을 멈춘 지점부터 이어서 해줘."
 
 샘플 `state.json`(`history.jsonl`, `failure-log.jsonl`과 함께)이
-[`../examples/loop-state/`](../examples/loop-state)에 있어, 재개 가능한 상태 기계가 정확히 무엇을
+[`../../examples/agent-coach/loop-state/`](../../examples/agent-coach/loop-state)에 있어, 재개 가능한 상태 기계가 정확히 무엇을
 기록하는지 볼 수 있습니다.
 
 ---
@@ -135,7 +135,7 @@ printf '%s' '<json>' | python3 agent-coach/scripts/score_compare.py
 루프는 사람 큐레이션 게이트에서 멈춰 입력 승인과 루브릭 작성을 요청합니다 — 셋을 조용히 확정해
 거기에 최적화하지 않습니다. 큐레이션할 *무엇*을 고르는 craft는 그 자체로 한 페이지입니다:
 [`golden-set.ko.md`](./golden-set.ko.md)를 보고, 부트스트래퍼가 무엇을 하고 무엇을 하지 않는지는
-[`../agent-coach/agents/bootstrapper.md`](../agent-coach/agents/bootstrapper.md)를 보세요.
+[`../../skills/agent-coach/agents/bootstrapper.md`](../../skills/agent-coach/agents/bootstrapper.md)를 보세요.
 
 ---
 
@@ -164,7 +164,7 @@ Runner (현재 + 후보 검증 + 확인) × 셋 크기
   강력한 지렛대).
 - [`run-config.ko.md`](./run-config.ko.md) — 모든 `run-config.json` 필드와, 정직한 측정을
   강제하는 사전 점검.
-- [`../agent-coach/references/safety-invariants.md`](../agent-coach/references/safety-invariants.md)
+- [`../../skills/agent-coach/references/safety-invariants.md`](../../skills/agent-coach/references/safety-invariants.md)
   — S1–S7: 병합 게이트·홀드아웃 HALT·스테이징이 존재하는 이유.
-- [`../agent-coach/references/loop-concepts.md`](../agent-coach/references/loop-concepts.md)
+- [`../../skills/agent-coach/references/loop-concepts.md`](../../skills/agent-coach/references/loop-concepts.md)
   — 모든 설계 선택의 배경 원칙.

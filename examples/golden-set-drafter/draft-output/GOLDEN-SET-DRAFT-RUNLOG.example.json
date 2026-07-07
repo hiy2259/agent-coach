@@ -1,0 +1,31 @@
+{
+  "_note": "가공 예시 — 실제 RUNLOG는 emit_draft.py가 같은 스키마로 생성합니다. counts는 이 축약 예시 세트(train 2 · heldout 1)와 일치시켰고, 실제 방출은 train≥5 · heldout≥3을 충족합니다. '_' 접두 필드는 파서가 무시합니다.",
+  "skill": "golden-set-drafter",
+  "skill_version": "v1",
+  "generated": "2026-07-07",
+  "target": "./agents/minutes-summarizer.md",
+  "case_language": "ko",
+  "ruler": {
+    "model": "claude-opus-4-8",
+    "temperature_configured": 0.7,
+    "temperature_pinning": "prose-only (harness limitation, both sides)"
+  },
+  "council": {
+    "rounds": 2,
+    "objections_total": 7,
+    "unresolved": [],
+    "accepted_risks": [
+      "obj-r2-1(minor): 분량 기준과 형식 기준의 소폭 채점 상관(가공 예시 — 실제 기록은 회의체 판정문을 그대로 담는다)"
+    ]
+  },
+  "expose": {
+    "train_total": 2,
+    "verified_failing": ["minutes-no-deadline"],
+    "top_up": [],
+    "baseline_excluded": {},
+    "heldout_runs": 0
+  },
+  "counts": { "train": 2, "heldout": 1 },
+  "warnings": [],
+  "next_step": "human authors ALL held-out rubrics (see GOLDEN-SET-DRAFT-README.md), then runs agent-coach op=split; first run is expected to error on the empty-rubric held-out ids — that error is the gate working"
+}

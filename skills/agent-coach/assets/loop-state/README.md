@@ -17,7 +17,7 @@ schemas: `references/data-formats.md`. The guarantees behind them:
 
 > **`golden-set.json` is USER-PROVIDED — it is *not* a bundled template.** The
 > human owns the inputs and the rubric (S5); the skill must not generate it. A
-> worked reference lives at `examples/en/golden-set/golden-set.example.json`, and the
+> worked reference lives at `examples/agent-coach/en/golden-set/golden-set.example.json`, and the
 > full schema is in `references/data-formats.md`. Place the user's
 > `golden-set.json` (and any `cases/*.input.txt`) into `loop/<target>/` at setup.
 

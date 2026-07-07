@@ -9,7 +9,7 @@ loop would then optimize toward the AI's own blind spots with nothing to catch
 it. Your rubric is the one part of this set that must come from you.
 
 This guide is the condensed craft. Full treatment:
-`../../docs/golden-set.md` and `../../agent-coach/references/golden-set-guide.md`.
+`../../../docs/agent-coach/golden-set.md` and `../../agent-coach/references/golden-set-guide.md`.
 
 ## Before writing a single criterion
 
@@ -56,7 +56,7 @@ This guide is the condensed craft. Full treatment:
    (omission gaming). Keep the two sides in different cases: both sides in
    one case's rubric is a conflicting pair that caps that case below 100%
    forever (this repo's dogfood hit exactly that with a "Severity" criterion
-   — see `docs/golden-set.md`).
+   — see `docs/agent-coach/golden-set.md`).
 
 ## Per-case template
 

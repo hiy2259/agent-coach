@@ -4,7 +4,7 @@
 
 *Read this in another language: [한국어](./README.ko.md)*
 
-`agent-coach` is a [Claude Code](https://docs.claude.com/en/docs/claude-code) skill (it lives in [`agent-coach/`](./agent-coach)) that tunes a target prompt/skill/instruction file the way a good coach trains an athlete:
+`agent-coach` is a [Claude Code](https://docs.claude.com/en/docs/claude-code) skill (it lives in [`skills/agent-coach/`](./skills/agent-coach)) that tunes a target prompt/skill/instruction file the way a good coach trains an athlete:
 
 > **measure → change ONE thing → measure again → keep it only if the score really went up.**
 
@@ -61,7 +61,7 @@ Its governing rule is **"no evolution without measurement."** You never change t
 
 ### The four actors
 
-The single most important structural rule: **the model that proposes a change is not the model that grades it, and neither is the model that runs the target.** Each actor is a separate Claude Code subagent with its own prompt under [`agent-coach/agents/`](./agent-coach/agents), so each starts from a clean context and the separation is *real*, not nominal.
+The single most important structural rule: **the model that proposes a change is not the model that grades it, and neither is the model that runs the target.** Each actor is a separate Claude Code subagent with its own prompt under [`skills/agent-coach/agents/`](./skills/agent-coach/agents), so each starts from a clean context and the separation is *real*, not nominal.
 
 | Actor | Job | Notes |
 |---|---|---|
@@ -96,7 +96,7 @@ The loop runs up to **N** turns (default 10). Each turn changes **at most one th
 
 ### The merge gate (the heart)
 
-[`score_compare.py`](./agent-coach/scripts/score_compare.py) — not a model — makes the decision. A change **MERGES only when all of these hold:**
+[`score_compare.py`](./skills/agent-coach/scripts/score_compare.py) — not a model — makes the decision. A change **MERGES only when all of these hold:**
 
 ```
 train_after   >  train_before                      (a strictly positive gain — a +0.0 tie never merges)
@@ -110,7 +110,7 @@ Otherwise:
 - If `train` rises but `heldout` falls by **more than** `eps_heldout` → **HALT** (overfitting: the change memorized train and broke generalization). HALT is terminal.
 - Otherwise → **DISCARD** (no real gain; the addition is reverted).
 
-The margins `eps_train` / `eps_heldout` are **measurement noise**, calibrated by [`calibrate_noise.py`](./agent-coach/scripts/calibrate_noise.py): it re-runs the Runner on fixed inputs `k_calib` times (≥5 recommended), grades each, and derives the score spread per split — floored at a small positive `min_eps` so a `+0.0` tie can never look like progress. The held-out margin is **symmetric** (`eps_heldout` on both the merge and HALT side), so ordinary held-out noise does not trigger false HALTs.
+The margins `eps_train` / `eps_heldout` are **measurement noise**, calibrated by [`calibrate_noise.py`](./skills/agent-coach/scripts/calibrate_noise.py): it re-runs the Runner on fixed inputs `k_calib` times (≥5 recommended), grades each, and derives the score spread per split — floored at a small positive `min_eps` so a `+0.0` tie can never look like progress. The held-out margin is **symmetric** (`eps_heldout` on both the merge and HALT side), so ordinary held-out noise does not trigger false HALTs.
 
 **Check the gate is satisfiable first.** Pass the baseline scores to `calibrate_noise.py`. If it returns `gate_satisfiable: false` — i.e. `eps_train ≥ 1 − baseline_train`, so *no* change could ever clear the gate (this also covers the saturated case where the baseline is already ≈1.0) — the loop **STOPS and surfaces the warning** instead of burning N turns. The fix is a bigger / harder golden set or a higher `k_calib`, not more proposing.
 
@@ -133,7 +133,7 @@ A plateau below your hoped-for score is **information, not failure**: it means t
 
 ## The seven safety invariants (S1–S7)
 
-These are the reason the skill exists. Each removes one specific way "self-improvement" silently degrades into evolution-without-measurement. Full statements: [`references/safety-invariants.md`](./agent-coach/references/safety-invariants.md).
+These are the reason the skill exists. Each removes one specific way "self-improvement" silently degrades into evolution-without-measurement. Full statements: [`references/safety-invariants.md`](./skills/agent-coach/references/safety-invariants.md).
 
 | # | Invariant | Prevents | Enforced by |
 |---|---|---|---|
@@ -157,60 +157,75 @@ This is a Claude Code skill — you drive it in natural language; the orchestrat
 
 It validates the config, measures a **baseline** on train + held-out, runs the gated loop (one **staged** change per turn), and hands you a **batch to commit or revert** — your live file is untouched until you commit. It is semi-autonomous: you sit *on* the loop, not in every turn, and the final "does it actually work" QA stays with you.
 
-→ **Full walkthrough** — the three scenarios (warm start / cold start / overfit-guard), resuming an interrupted run, cold start, and cost — is in [`docs/running.md`](./docs/running.md).
+→ **Full walkthrough** — the three scenarios (warm start / cold start / overfit-guard), resuming an interrupted run, cold start, and cost — is in [`docs/agent-coach/running.md`](./docs/agent-coach/running.md).
 
 ### Verify the deterministic core
 
 Before trusting any run, verify the code that makes every irreversible decision:
 
 ```bash
-python3 agent-coach/scripts/tests/run.py          # 219 tests, stdlib only
-# or:  python3 -m pytest agent-coach/scripts/tests/
+python3 skills/agent-coach/scripts/tests/run.py          # 219 tests, stdlib only
+# or:  python3 -m pytest skills/agent-coach/scripts/tests/
 ```
 
 Every script reads its JSON payload on **stdin** (or a file-path arg), never as an inline argv string:
 
 ```bash
-printf '%s' '<json>' | python3 agent-coach/scripts/score_compare.py
+printf '%s' '<json>' | python3 skills/agent-coach/scripts/score_compare.py
 ```
 
 ---
 
 ## Full manual: `docs/`
 
-📖 The detailed how-to guide lives in [`docs/`](./docs) — in English and Korean (`*.ko.md`):
+📖 The detailed how-to guide lives in [`docs/agent-coach/`](./docs/agent-coach) — in English and Korean (`*.ko.md`):
 
 | Guide | What it covers |
 |---|---|
-| [**Building a good golden set**](./docs/golden-set.md) | The golden set is the moat: choosing cases, the rubric-writing craft, the train/held-out split, calibration, evolving the set between runs, anti-patterns, and a worked example. |
-| [**Configuring the run**](./docs/run-config.md) | Every `run-config.json` field, the three rules that keep measurement honest, and the pre-flight check. |
-| [**Running the loop**](./docs/running.md) | Quick start, the three real-world scenarios, resuming an interrupted run, cold start, and cost. |
+| [**Building a good golden set**](./docs/agent-coach/golden-set.md) | The golden set is the moat: choosing cases, the rubric-writing craft, the train/held-out split, calibration, evolving the set between runs, anti-patterns, and a worked example. |
+| [**Configuring the run**](./docs/agent-coach/run-config.md) | Every `run-config.json` field, the three rules that keep measurement honest, and the pre-flight check. |
+| [**Running the loop**](./docs/agent-coach/running.md) | Quick start, the three real-world scenarios, resuming an interrupted run, cold start, and cost. |
 
-Korean mirrors: [`golden-set.ko.md`](./docs/golden-set.ko.md) · [`run-config.ko.md`](./docs/run-config.ko.md) · [`running.ko.md`](./docs/running.ko.md).
+Korean mirrors: [`golden-set.ko.md`](./docs/agent-coach/golden-set.ko.md) · [`run-config.ko.md`](./docs/agent-coach/run-config.ko.md) · [`running.ko.md`](./docs/agent-coach/running.ko.md).
+
+No golden set yet? The companion skill [`golden-set-drafter`](./skills/golden-set-drafter/SKILL.md) drafts one for you (council-reviewed, failure-exposed) and stops at a gate where **you** author the held-out rubrics — see [`docs/golden-set-drafter/`](./docs/golden-set-drafter/README.md).
 
 ---
 
 ## Repository layout
 
-The README lives at the project root; the skill itself is in `agent-coach/`, with copy-paste-ready inputs in `examples/`.
+The README lives at the project root. The repository hosts **two skills** under `skills/` — `agent-coach` (this README's subject) and [`golden-set-drafter`](./skills/golden-set-drafter/SKILL.md), a companion that drafts a starter golden set *for* agent-coach. `docs/` and `examples/` are split one folder per skill.
 
 ```
 .
 ├── README.md                          # This file (English)
 ├── README.ko.md                       # Korean version
-├── docs/                              # Full manual (English + Korean .ko.md)
-│   ├── golden-set.md                  #   the golden set — the moat (cases, rubric, split)
-│   ├── run-config.md                  #   every run-config.json field + pre-flight
-│   └── running.md                     #   quick start, scenarios, resuming, cold start, cost
-├── examples/                          # Copy-paste-ready example inputs & state
-│   ├── run-config.example.json        #   run config (Korean-annotated)
-│   ├── golden-set/                    #   golden set + cases/ (Korean-annotated)
-│   ├── loop-state/                    #   sample history / failure-log / state
-│   └── en/                            #   English mirror of everything above
-│       ├── run-config.example.json
-│       ├── golden-set/
-│       └── loop-state/
-└── agent-coach/                    # The skill
+├── docs/                              # Full manual, one folder per skill (English + Korean .ko.md)
+│   ├── agent-coach/                   #   golden-set.md · run-config.md · running.md — the loop's manual
+│   └── golden-set-drafter/            #   landing page: what the drafter emits, what the human owes back
+├── examples/                          # Copy-paste-ready examples, one folder per skill
+│   ├── agent-coach/
+│   │   ├── run-config.example.json    #   run config (Korean-annotated)
+│   │   ├── golden-set/                #   golden set + cases/ (Korean-annotated)
+│   │   ├── loop-state/                #   sample history / failure-log / state
+│   │   └── en/                        #   English mirror of everything above
+│   └── golden-set-drafter/
+│       ├── draft-output/              #   an emitted draft: unfrozen set + RUNLOG (held-out rubrics empty by design)
+│       ├── gate-first-run.example.json#   the op=split first-run refusal that enforces human-authored rubrics
+│       └── en/                        #   English mirror of everything above
+├── skills/
+│   ├── agent-coach/                   # The measured self-improvement loop (this README)
+│   │   └── …                          #   full layout below
+│   └── golden-set-drafter/            # Companion: drafts a v1 golden set for agent-coach
+│       ├── SKILL.md                   #   runs BEFORE and INSTEAD OF agent-coach when no set exists yet
+│       ├── agents/                    #   council actors (gsd-proposer/-adversary/-arbiter) + vendored/ runner·grader copies
+│       ├── scripts/                   #   emit_draft.py · scan_inputs.py + tests (incl. drift-guard)
+│       ├── references/                #   heldout-rubric-guide.md — the guide for the human at the gate
+│       ├── evals/                     #   Level-2 evals for the drafter
+│       └── assets/                    #   runbook-template.md — skeleton of the emitted draft README
+└── loop/                              # Per-run working state (see note below)
+
+skills/agent-coach/                    # The skill
     ├── SKILL.md                       #   the skill contract Claude Code loads (start here)
     ├── agents/                        #   the four isolated actors (one prompt each)
     │   ├── runner.md                  #     executes the target (sandboxed)
@@ -245,7 +260,7 @@ The per-run working state lives in `loop/<target>/` and is fully human-readable 
 
 ## Bundled scripts
 
-Code makes every irreversible decision; the model only generates and grades. All scripts are under [`agent-coach/scripts/`](./agent-coach/scripts).
+Code makes every irreversible decision; the model only generates and grades. All scripts are under [`skills/agent-coach/scripts/`](./skills/agent-coach/scripts).
 
 | Step | Script | Role |
 |---|---|---|
@@ -262,7 +277,7 @@ Code makes every irreversible decision; the model only generates and grades. All
 
 ## Requirements
 
-- **Python ≥ 3.8** for `agent-coach/scripts/` — **standard library only**, no third-party packages.
+- **Python ≥ 3.8** for `skills/agent-coach/scripts/` — **standard library only**, no third-party packages.
 - **Claude Code** (subagents) — to keep the four actors genuinely isolated, each running from a clean context.
 
 ---

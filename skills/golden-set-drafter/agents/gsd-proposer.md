@@ -49,7 +49,7 @@ simply never mentioning owners (omission gaming). The pair must live in **two
 different cases — never as two criteria inside one case**: a same-case pair
 becomes a conflicting criterion set that caps that case below 100% forever
 and poisons the axis (this repo already hit exactly that trap with a
-"Severity" criterion — see `docs/golden-set.md:103-116`).
+"Severity" criterion — see `docs/agent-coach/golden-set.md:103-116`).
 
 **Draft ≥ 4 held-out candidate INPUTS — inputs only.**
 

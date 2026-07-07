@@ -1,0 +1,10 @@
+From the meeting minutes below, organize the to-dos into a table (item / owner / due).
+
+[Weekly sprint meeting — 2026-07-07]
+Attendees: Jisu (design), Minho (frontend), Seoyeon (backend), Junho (PM)
+
+- Jisu will produce mockup v2 for the onboarding screen redesign. Junho confirmed he will close stakeholder review by July 21.
+- Seoyeon investigates the payment-module timeout bug. Root cause to be shared at next week's meeting.
+- Minho starts the prototype after mockup v2 is finalized (no due date set).
+- New terms-of-service wording is on hold pending legal's answer — owner undecided.
+- Next meeting: July 14.

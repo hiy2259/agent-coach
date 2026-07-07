@@ -1,0 +1,9 @@
+{
+  "_note": "This output is the real first-run refusal, captured verbatim by running the actual agent-coach split_goldenset.py against draft-output/golden-set.example.json (2026-07-07). The error fails while naming exactly the empty-rubric held-out id(s) — that is not a bug but the gate working: it is why golden-set-drafter never ghostwrites held-out rubrics, and the point where human authorship is enforced by code. After the human authors every rubric, re-running the same command returns ok:true and writes split_hash (the freeze). In a real run, the emitted GOLDEN-SET-DRAFT-README.md carries the exact command in its Gate data appendix. Fields prefixed with '_' are explanatory.",
+  "command": "printf '%s' '{\"op\":\"split\",\"golden_set_path\":\"golden-set.json\",\"write\":true}' | python3 <repo>/skills/agent-coach/scripts/split_goldenset.py",
+  "exit_code": 1,
+  "output": {
+    "ok": false,
+    "reason": "error: empty rubric on active case(s) ['quarterly-report-summary']: a frozen rubric-less case has zero criteria, so the gate passes vacuously and the loop merges against a null eval. Add yes/no criteria (5-7 per case) or retire the case."
+  }
+}

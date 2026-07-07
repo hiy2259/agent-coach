@@ -97,9 +97,9 @@ exists in agent-coach; you just emit a draft that keeps it armed.
   improvise, never silently default**:
   1. **Interactive session** → **ask the user** for the real production
      model + temperature (offer to scaffold from
-     `examples/en/run-config.example.json`).
+     `examples/agent-coach/en/run-config.example.json`).
   2. **Non-interactive run** (headless / CI / subagent — no human to ask) →
-     scaffold from `examples/en/run-config.example.json`, mark the ruler
+     scaffold from `examples/agent-coach/en/run-config.example.json`, mark the ruler
      `[ASSUMED — production model unconfirmed]` in the RUNLOG ruler record,
      and **void the run's discrimination claims**: verified-failing flags
      measured at an assumed ruler are non-authoritative, the runbook must say

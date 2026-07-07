@@ -39,7 +39,7 @@ Files at a glance:
 **User-provided.** The fixed exam: curated inputs + a yes/no rubric per input + a
 frozen `train`/`heldout` split + evolution metadata. This is *not* a bundled
 template — the user owns it (S5). Full worked example:
-`examples/en/golden-set/golden-set.example.json`.
+`examples/agent-coach/en/golden-set/golden-set.example.json`.
 
 ### Header (dataset-level) fields
 
@@ -132,7 +132,7 @@ template — the user owns it (S5). Full worked example:
 ## `run-config.json` (§4.5)
 
 **User-provided.** Configures how the Runner executes the target "like real use"
-and controls the loop. Full example: `examples/en/run-config.example.json`.
+and controls the loop. Full example: `examples/agent-coach/en/run-config.example.json`.
 
 | Block | Field | Type | Meaning |
 |---|---|---|---|

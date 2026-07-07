@@ -19,7 +19,7 @@ venv/
 *~
 
 # ── Build output ─────────────────────────────────────────────────────
-# Packaged skill, rebuilt deterministically from agent-coach/ via
+# Packaged skills, rebuilt deterministically from skills/<name>/ via
 # skill-creator's package_skill.py (verified byte-identical on rebuild).
 # Delete this line if you'd rather commit the .skill as a release artifact.
 dist/

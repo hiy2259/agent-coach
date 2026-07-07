@@ -11,14 +11,14 @@ This page is the field-by-field reference for `run-config.json` and the pre-flig
 check that enforces it. For the *exam* this config runs against, see
 [`golden-set.md`](./golden-set.md); for the end-to-end run, see
 [`running.md`](./running.md); for the authoritative JSON schema see
-[`../agent-coach/references/data-formats.md`](../agent-coach/references/data-formats.md).
+[`../../skills/agent-coach/references/data-formats.md`](../../skills/agent-coach/references/data-formats.md).
 
 ---
 
 ## A minimal config
 
 This warm-start config (the same one ships at
-[`../examples/en/run-config.example.json`](../examples/en/run-config.example.json)
+[`../../examples/agent-coach/en/run-config.example.json`](../../examples/agent-coach/en/run-config.example.json)
 for copy-paste) is all you need when you already have a golden set:
 
 ```json
@@ -136,7 +136,7 @@ a misconfigured actor can never quietly invalidate a whole run:
   missing `budget` block.
 
 ```bash
-printf '%s' '{"config_path":"./run-config.json"}' | python3 agent-coach/scripts/validate_config.py
+printf '%s' '{"config_path":"./run-config.json"}' | python3 skills/agent-coach/scripts/validate_config.py
 ```
 
 (Run scripts from the repository root, as shown — the path is relative to the project
@@ -150,7 +150,7 @@ root, not to this `docs/` page.)
   of the leverage lives.
 - [`running.md`](./running.md) — the end-to-end run: validate → baseline → loop →
   batch commit/revert, plus cold start and resuming.
-- [`../agent-coach/references/data-formats.md`](../agent-coach/references/data-formats.md)
+- [`../../skills/agent-coach/references/data-formats.md`](../../skills/agent-coach/references/data-formats.md)
   — the authoritative `run-config.json` schema, field by field.
-- [`../agent-coach/references/safety-invariants.md`](../agent-coach/references/safety-invariants.md)
+- [`../../skills/agent-coach/references/safety-invariants.md`](../../skills/agent-coach/references/safety-invariants.md)
   — S1–S7, including S5 (actor separation) and S7 (noise from Runner variance, grader at temperature 0).

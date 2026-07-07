@@ -1,0 +1,9 @@
+{
+  "_note": "이 output은 draft-output/golden-set.example.json 에 실제 agent-coach split_goldenset.py 를 실행해 캡처한 진짜 첫-실행 거부입니다(2026-07-07, 원문 그대로). 빈 rubric 의 held-out id 를 정확히 나열하며 실패하는 이 에러는 버그가 아니라 게이트가 작동하는 모습입니다 — golden-set-drafter 가 held-out 채점표를 절대 대필하지 않는 이유이자, 사람 작성이 코드로 강제되는 지점입니다. 사람이 채점표를 모두 작성한 뒤 같은 명령을 재실행하면 ok:true 와 함께 split_hash 가 기록되어 동결됩니다. 실전에서는 방출된 GOLDEN-SET-DRAFT-README.md 의 Gate data 부록이 정확한 명령을 담고 있습니다. '_' 접두 필드는 설명용입니다.",
+  "command": "printf '%s' '{\"op\":\"split\",\"golden_set_path\":\"golden-set.json\",\"write\":true}' | python3 <repo>/skills/agent-coach/scripts/split_goldenset.py",
+  "exit_code": 1,
+  "output": {
+    "ok": false,
+    "reason": "error: empty rubric on active case(s) ['quarterly-report-summary']: a frozen rubric-less case has zero criteria, so the gate passes vacuously and the loop merges against a null eval. Add yes/no criteria (5-7 per case) or retire the case."
+  }
+}

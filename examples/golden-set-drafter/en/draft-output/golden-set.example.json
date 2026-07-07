@@ -1,0 +1,60 @@
+{
+  "_note": "Abbreviated example for format illustration (train 2 / heldout 1, against a fictional meeting-minutes summarizer agent). A real emitted draft is machine-enforced by emit_draft.py: train>=5, heldout>=3, ALL held-out rubrics empty, provenance/tags rules. The empty held-out rubrics are not a defect but the gate: agent-coach's op=split refuses to freeze until a human authors them (see ../gate-first-run.example.json). The missing split_hash is also intentional (unfrozen). Fields prefixed with '_' are ignored by the parser.",
+  "target": "./agents/minutes-summarizer.md",
+  "version": "v1",
+  "parent_version": null,
+  "created": "2026-07-07",
+  "updated": "2026-07-07",
+  "changelog": "golden-set-drafter v1 draft (fictional example): council consensus in 2 rounds (7 objections total), expose measured 2/2, verified_failing 1, held-out rubrics empty (awaiting human authorship).",
+  "min_size": { "train": 5, "heldout": 3 },
+  "cases": [
+    {
+      "id": "minutes-no-deadline",
+      "split": "train",
+      "provenance": "bootstrap",
+      "added_in_version": "v1",
+      "realistic": false,
+      "status": "active",
+      "tags": ["ai-input", "ai-rubric"],
+      "notes": "Primary axis = non-fabrication guard (don't invent a deadline that isn't there). Negative side of a cross-case guard pair — the positive side (capturing a deadline that IS there) lives in action-items-long-minutes. Merging both directions into one case would create a conflicting pair, so the two sides must stay in different cases. | expose measurement (fictional example, opus-4-8): 2/5 — verified failing.",
+      "rubric": [
+        "Did it list every decision actually made in the minutes?",
+        "Did it attribute each action item to the person named in the minutes?",
+        "Did it state that no deadline was specified, rather than inventing one?",
+        "Did it keep the summary within the requested length (5 lines)?",
+        "Did it avoid adding agenda items that never appeared in the minutes?"
+      ],
+      "input": "Summarize these meeting minutes in 5 lines or fewer, focusing on decisions and action items (with owners): [3-person product meeting — decided to proceed with the new onboarding screen redesign. Jisu owns the design mockups, Minho owns the copy draft. No schedule/deadline mentioned. A/B test scope to be discussed next meeting.]"
+    },
+    {
+      "id": "action-items-long-minutes",
+      "split": "train",
+      "provenance": "bootstrap",
+      "added_in_version": "v1",
+      "realistic": false,
+      "status": "active",
+      "tags": ["ai-input", "ai-rubric"],
+      "notes": "Primary axis = extraction fidelity + positive side of the guard pair (capture the deadline the minutes DO specify — negative side is minutes-no-deadline). Long input, so input_file is used (short inputs stay inline). | expose measurement (fictional example, opus-4-8): 5/5 pass — no failure claim today. Not a top-up; kept for cross-case guard-pair integrity.",
+      "rubric": [
+        "Did it extract every action item in the minutes?",
+        "Did it attribute each item to the person named in the minutes?",
+        "Did it capture the deadline explicitly stated in the minutes (July 21)?",
+        "Did it avoid inventing action items that are not in the minutes?",
+        "Did it follow the requested table format (item / owner / due)?"
+      ],
+      "input_file": "./cases/action-items-long-minutes.input.txt"
+    },
+    {
+      "id": "quarterly-report-summary",
+      "split": "heldout",
+      "provenance": "bootstrap",
+      "added_in_version": "v1",
+      "realistic": true,
+      "status": "active",
+      "tags": ["ai-input", "human-rubric"],
+      "notes": "probe: accuracy/non-distortion when summarizing a numbers-dense document. — The probe names a SITUATION only (enumerating pass conditions is banned as a §5-2 answer-hint). The rubric is intentionally empty: a human authors it per heldout-rubric-guide.md.",
+      "rubric": [],
+      "input": "Summarize this quarterly results report for the executive team in 10 lines or fewer: [Revenue 4.23B KRW (+8% QoQ), 312 new customers, churn 2.1%->1.8%, marketing spend 620M KRW (over the 550M budget), Q4 revenue target 5.0B KRW. 7 detail tables omitted.]"
+    }
+  ]
+}

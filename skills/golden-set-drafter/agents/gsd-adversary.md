@@ -52,7 +52,7 @@ criterion, not a vibe.
    positive-control sibling case, and (b) a pair implemented as two criteria
    inside ONE case — that is a conflicting-criteria trap (same family as #3)
    which caps the case below 100% forever; this repo's dogfood hit exactly
-   that with a "Severity" criterion (`docs/golden-set.md:103-116`).
+   that with a "Severity" criterion (`docs/agent-coach/golden-set.md:103-116`).
 
 ## Output — emit exactly this JSON, nothing else
 

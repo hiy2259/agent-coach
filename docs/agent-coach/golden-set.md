@@ -10,9 +10,9 @@
 This page is the craft: how to choose cases, how to write rubric criteria that
 actually measure quality, how to split, how to grow the set, and the anti-patterns
 that quietly defeat the whole loop. For the exact JSON shapes see
-[`../agent-coach/references/data-formats.md`](../agent-coach/references/data-formats.md);
+[`../../skills/agent-coach/references/data-formats.md`](../../skills/agent-coach/references/data-formats.md);
 for the safety rationale see
-[`../agent-coach/references/safety-invariants.md`](../agent-coach/references/safety-invariants.md).
+[`../../skills/agent-coach/references/safety-invariants.md`](../../skills/agent-coach/references/safety-invariants.md).
 
 ---
 
@@ -70,7 +70,7 @@ drafts **candidates only**. You approve, prune, and add the hard cases it missed
 Rubber-stamping an AI-drafted set is the weak version of this guard: the model and
 the case-writer share blind spots, and the loop ends up optimizing toward a
 self-consistent illusion. (See
-[`../agent-coach/agents/bootstrapper.md`](../agent-coach/agents/bootstrapper.md).)
+[`../../skills/agent-coach/agents/bootstrapper.md`](../../skills/agent-coach/agents/bootstrapper.md).)
 
 ---
 
@@ -213,7 +213,7 @@ target keeps improving past the first plateau:
 Target: a **meeting-minutes summarizer** (`./summarizer.md`). Two cases — one clear
 `train`, one realistic `heldout` trap — show case selection, the negative-guard
 axis, and split rationale. (Full schema:
-[`../agent-coach/references/data-formats.md`](../agent-coach/references/data-formats.md).)
+[`../../skills/agent-coach/references/data-formats.md`](../../skills/agent-coach/references/data-formats.md).)
 
 ```json
 {
@@ -281,11 +281,11 @@ running.
   separation that keep grading honest).
 - [`running.md`](./running.md) — the end-to-end run: validate → baseline → loop →
   batch commit/revert.
-- [`../agent-coach/references/data-formats.md`](../agent-coach/references/data-formats.md)
+- [`../../skills/agent-coach/references/data-formats.md`](../../skills/agent-coach/references/data-formats.md)
   — the authoritative `golden-set.json` schema, field by field.
-- [`../agent-coach/references/safety-invariants.md`](../agent-coach/references/safety-invariants.md)
+- [`../../skills/agent-coach/references/safety-invariants.md`](../../skills/agent-coach/references/safety-invariants.md)
   — S1–S7, including S5 (human-owned sourcing + size gate).
-- [`../golden-set-drafter/SKILL.md`](../golden-set-drafter/SKILL.md) — a skill that
+- [`../../skills/golden-set-drafter/SKILL.md`](../../skills/golden-set-drafter/SKILL.md) — a skill that
   drafts a starting set for you (council-drafted cases + train rubrics, emitted
   unfrozen) while leaving **every held-out rubric for you to author** — the craft
   you apply at that gate is exactly this guide.
