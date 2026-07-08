@@ -203,16 +203,13 @@ README는 프로젝트 루트에 있습니다. 이 저장소는 `skills/` 아래
 ├── docs/                              # 전체 매뉴얼, 스킬당 한 폴더 (영어 + 한국어 .ko.md)
 │   ├── agent-coach/                   #   golden-set.md · run-config.md · running.md — 루프 매뉴얼
 │   └── golden-set-drafter/            #   랜딩: drafter가 무엇을 방출하고, 사람이 무엇을 작성해야 하는가
-├── examples/                          # 복붙 가능한 예시, 스킬당 한 폴더
+├── examples/                         # 복붙 가능한 예시, 스킬당 한 폴더 (ko/ + en/ 미러)
 │   ├── agent-coach/
-│   │   ├── run-config.example.json    #   실행 설정 (한글 주석)
-│   │   ├── golden-set/                #   골든셋 + cases/ (한글 주석)
-│   │   ├── loop-state/                #   샘플 history / failure-log / state
-│   │   └── en/                        #   위 전체의 영문 미러
+│   │   ├── ko/                       #   한글 주석: run-config.example.json · golden-set/ · loop-state/
+│   │   └── en/                       #   영문 미러
 │   └── golden-set-drafter/
-│       ├── draft-output/              #   방출된 초안의 모습: 미동결 세트 + RUNLOG (held-out 채점표는 설계상 공란)
-│       ├── gate-first-run.example.json#   사람 작성 채점표를 강제하는 op=split 첫-실행 거부 출력
-│       └── en/                        #   위 전체의 영문 미러
+│       ├── ko/                       #   한국어: draft-output/ (미동결 세트 + RUNLOG) · gate-first-run.example.json
+│       └── en/                       #   영문 미러
 ├── skills/
 │   ├── agent-coach/                   # 측정 기반 자기개선 루프 (이 README의 주제)
 │   │   └── …                          #   상세 구조는 아래

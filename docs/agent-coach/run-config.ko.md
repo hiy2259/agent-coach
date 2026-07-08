@@ -18,7 +18,7 @@
 ## 최소 설정
 
 이미 골든셋이 있을 때는 이 웜 스타트 설정(같은 파일이 복붙용으로
-[`../../examples/agent-coach/run-config.example.json`](../../examples/agent-coach/run-config.example.json)에도 있습니다)만
+[`../../examples/agent-coach/ko/run-config.example.json`](../../examples/agent-coach/ko/run-config.example.json)에도 있습니다)만
 있으면 됩니다:
 
 ```json

@@ -90,6 +90,6 @@ After emission the skill **stops at the gate**. What follows are the human's fou
 |---|---|
 | [`skills/golden-set-drafter/SKILL.md`](../../skills/golden-set-drafter/SKILL.md) | The full skill contract (steps, rules, §5-2) |
 | [`heldout-rubric-guide.md`](../../skills/golden-set-drafter/references/heldout-rubric-guide.md) | The authoring guide for the human at the gate |
-| [`examples/golden-set-drafter/`](../../examples/golden-set-drafter/en/draft-output/golden-set.example.json) | Example emissions (Korean root / `en/` mirror) |
+| [`examples/golden-set-drafter/`](../../examples/golden-set-drafter/en/draft-output/golden-set.example.json) | Example emissions (`ko/` / `en/` mirror) |
 | [`../agent-coach/golden-set.md`](../agent-coach/golden-set.md) | Golden-set craft in general — the doc this skill defers to |
 | [`../agent-coach/running.md`](../agent-coach/running.md) | Running the improvement loop after the freeze |

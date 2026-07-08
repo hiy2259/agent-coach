@@ -203,16 +203,13 @@ The README lives at the project root. The repository hosts **two skills** under 
 ├── docs/                              # Full manual, one folder per skill (English + Korean .ko.md)
 │   ├── agent-coach/                   #   golden-set.md · run-config.md · running.md — the loop's manual
 │   └── golden-set-drafter/            #   landing page: what the drafter emits, what the human owes back
-├── examples/                          # Copy-paste-ready examples, one folder per skill
+├── examples/                         # Copy-paste-ready examples, one folder per skill (ko/ + en/ mirror)
 │   ├── agent-coach/
-│   │   ├── run-config.example.json    #   run config (Korean-annotated)
-│   │   ├── golden-set/                #   golden set + cases/ (Korean-annotated)
-│   │   ├── loop-state/                #   sample history / failure-log / state
-│   │   └── en/                        #   English mirror of everything above
+│   │   ├── ko/                       #   Korean-annotated: run-config.example.json · golden-set/ · loop-state/
+│   │   └── en/                       #   English mirror
 │   └── golden-set-drafter/
-│       ├── draft-output/              #   an emitted draft: unfrozen set + RUNLOG (held-out rubrics empty by design)
-│       ├── gate-first-run.example.json#   the op=split first-run refusal that enforces human-authored rubrics
-│       └── en/                        #   English mirror of everything above
+│       ├── ko/                       #   Korean: draft-output/ (unfrozen set + RUNLOG) · gate-first-run.example.json
+│       └── en/                       #   English mirror
 ├── skills/
 │   ├── agent-coach/                   # The measured self-improvement loop (this README)
 │   │   └── …                          #   full layout below

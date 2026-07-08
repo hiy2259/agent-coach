@@ -109,7 +109,7 @@ printf '%s' '<json>' | python3 skills/agent-coach/scripts/score_compare.py
 > "`summarizer.md`에 대한 agent-coach 실행을 멈춘 지점부터 이어서 해줘."
 
 샘플 `state.json`(`history.jsonl`, `failure-log.jsonl`과 함께)이
-[`../../examples/agent-coach/loop-state/`](../../examples/agent-coach/loop-state)에 있어, 재개 가능한 상태 기계가 정확히 무엇을
+[`../../examples/agent-coach/ko/loop-state/`](../../examples/agent-coach/ko/loop-state)에 있어, 재개 가능한 상태 기계가 정확히 무엇을
 기록하는지 볼 수 있습니다.
 
 ---
