@@ -40,3 +40,7 @@ golden-set-drafter-workspace/
 # state produced by each agent-coach run. Reproducible working state, not
 # source; kept on disk but never committed.
 /loop/
+
+# Local usecase inputs (target prompts, golden sets, direction docs) — kept on
+# disk as working material, not committed.
+/usecase/
