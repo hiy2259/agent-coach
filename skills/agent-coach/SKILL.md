@@ -15,6 +15,7 @@ description: >-
   before you change." Do NOT use for a one-off single edit, for optimizing
   application/source code (use code tools), or for code-shipping like opening
   PRs or fixing CI.
+argument-hint: "<target file> + goal — e.g. improve ./prompts/summarizer.md on golden-set.json (measure first, no overfit)"
 compatibility: Requires python3 >=3.8 (standard library only) for scripts/; requires subagents (Claude Code) to keep the four actors isolated.
 ---
 
