@@ -4,7 +4,7 @@
 > It drafts a golden-set v1 from your target file (+ a development-direction doc), but it
 > **never writes the held-out rubrics** — those stay yours. That blank is the design's
 > load-bearing safety device.
-> 한국어판: [`README.ko.md`](./README.ko.md)
+> 한국어판: [`golden-set-drafter.ko.md`](./golden-set-drafter.ko.md)
 
 The skill contract in full: [`skills/golden-set-drafter/SKILL.md`](../../skills/golden-set-drafter/SKILL.md)
 

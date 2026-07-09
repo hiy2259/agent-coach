@@ -3,7 +3,7 @@
 > **agent-coach로 프롬프트를 개선하고 싶은데 골든셋이 아직 없다면, 이 스킬이 먼저 실행됩니다.**
 > 대상 파일(+ 발전 방향 문서)에서 골든셋 v1 초안을 만들어 주되, **held-out 채점표만은
 > 절대 쓰지 않고** 사람 몫으로 남깁니다 — 그 공란이 이 설계의 핵심 안전장치입니다.
-> English version: [`README.md`](./README.md)
+> English version: [`golden-set-drafter.md`](./golden-set-drafter.md)
 
 스킬 본체(계약 전문): [`skills/golden-set-drafter/SKILL.md`](../../skills/golden-set-drafter/SKILL.md)
 
