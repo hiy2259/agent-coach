@@ -34,3 +34,9 @@ loop-optimizer-audit-report.md
 
 agent-coach-workspace/
 golden-set-drafter-workspace/
+
+# ── Per-run working state ────────────────────────────────────────────
+# loop/<target>/ — golden sets, staging prompts, history/failure logs and turn
+# state produced by each agent-coach run. Reproducible working state, not
+# source; kept on disk but never committed.
+/loop/
