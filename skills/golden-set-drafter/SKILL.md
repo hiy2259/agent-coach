@@ -16,6 +16,7 @@ description: >-
   held-out rubrics stay empty for the human to author (S5). Do NOT use to
   run, optimize, split, freeze, grade, or review an existing golden set, or
   ghostwrite held-out rubrics.
+argument-hint: "<target file> + development direction (goals / failure stories) — e.g. draft a golden set for ./agents/support-agent.md from ./direction.md"
 compatibility: Requires python3 >=3.8 (standard library only) for scripts/; requires subagents (Claude Code) to keep the council actors isolated; agent-coach co-located strongly preferred (co-located agents/ originals win at runtime; integration tests exercise ../agent-coach/scripts/split_goldenset.py) — standalone installs fall back to the bundled byte-copies in agents/vendored/ (drift-guard tested) with a RUNLOG disclosure.
 ---
 

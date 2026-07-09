@@ -28,6 +28,18 @@ for users who don't know the golden-set rules. This skill does the heavy lifting
 When no golden set exists, the correct order is: this skill runs **before, and instead
 of,** agent-coach.
 
+## What you provide (inputs)
+
+Two inputs are required; a third is optional:
+
+| Input | Required | What it is |
+|---|---|---|
+| **Target file** | yes | The prompt / skill / instruction file to build the set for — a path, e.g. `./agents/support-agent.md`. |
+| **Development direction** | yes | What the target should get *better at* — goals, failure stories, logs, collected experience. Free text or a file, e.g. `./direction.md`. It steers which cases the council drafts. |
+| **Prior golden set** | no | Passing an existing set makes v1 say "update/evolve is a v2 feature" and **stop** — it only ever drafts a **fresh v1**, never half-updates. |
+
+It also reads, automatically, the target's `run-config.json` to match the **production model + temperature** — the "ruler" it exposes train failures at (a wrong ruler makes the draft arrive saturated). No run-config? Interactively it **asks you** for the real model/temperature; headless it scaffolds one and marks the ruler *assumed*. Full option reference: [run-config](../agent-coach/run-config.md).
+
 ## What it emits (three artifacts)
 
 | Artifact | Contents | Example |
