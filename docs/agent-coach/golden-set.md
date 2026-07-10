@@ -1,127 +1,133 @@
 # Building a good golden set
 
-> The golden set is the **moat**. The loop is only as smart as this exam: every
+> The golden set is the exam, and the loop is only as smart as its exam: every
 > `MERGE`, `HALT`, and `DISCARD` is computed from how your cases score. Most of the
-> leverage in the whole skill lives here, and it is the one thing **you own** — the
-> model never writes both the cases and the rubric, or it would be grading its own
-> homework. A flattering set produces confident garbage; a *discriminating* set is
-> what makes "better" mean something.
+> leverage in the whole skill lives here — and this is the one part **you own**. The
+> model is never allowed to write both the cases and the grading criteria; that
+> would mean grading its own homework. A set that flatters the target produces
+> scores that look great and mean nothing. A set that *discriminates* — that can
+> tell a better prompt from a worse one — is what makes "better" mean something.
 
-This page is the craft: how to choose cases, how to write rubric criteria that
-actually measure quality, how to split, how to grow the set, and the anti-patterns
-that quietly defeat the whole loop. For the exact JSON shapes see
+This page teaches the craft: how to choose cases, how to write grading criteria
+that measure real quality, how to split train from held-out, how to grow the set
+over time, and the anti-patterns that quietly defeat the whole loop. For the exact
+JSON shapes see
 [`../../skills/agent-coach/references/data-formats.md`](../../skills/agent-coach/references/data-formats.md);
-for the safety rationale see
+for the safety reasoning see
 [`../../skills/agent-coach/references/safety-invariants.md`](../../skills/agent-coach/references/safety-invariants.md).
 
 ---
 
-## 1. The one idea: discriminate, don't flatter
+## 1. The core idea: every case must be able to fail
 
-A case earns its place only if it can tell a **better** target from a **worse** one
-— which means it must be able to **fail**. A case the target already aces on every
-version carries zero signal; it just pads the score.
+A case earns its place only if it can tell a **better** target from a **worse**
+one. That means the target must be able to **fail** it. A case the target already
+passes on every version carries zero information — it just pads the score.
 
-The failure mode to fear is **saturation**: if (almost) every case passes, the
-baseline sits near `1.0`, there is no gradient to climb, and the merge gate can
-*certify nothing* — no change can clear "beat the baseline by more than noise" when
-there is no room above the baseline. The loop detects this before turn 1
-(`calibrate_noise.py` returns `gate_satisfiable: false` / a `SATURATED` warning) and
-**refuses to run** rather than burn turns. That refusal is the set telling you it
-cannot measure progress.
+The failure mode to watch for is **saturation**: when (almost) every case passes,
+the baseline score sits near `1.0` and there is no room left to improve into. The
+merge gate demands "beat the baseline by more than noise", and no change can do
+that when the baseline is already at the ceiling. The loop detects this before
+turn 1 — `calibrate_noise.py` returns `gate_satisfiable: false` or a `SATURATED`
+warning — and **refuses to run** rather than burn turns. That refusal is the set
+telling you it cannot measure progress.
 
-> **Real example.** In this project's own dogfood, the first golden set scored the
-> target `1.0` on both splits. The loop correctly halted before turn 1 with a
-> `SATURATED` warning. Only after we added a criterion the target actually *failed*
-> (restoring headroom) could the loop measure — and merge — a real improvement.
+> **A real example.** When we ran this skill on its own project, the first golden
+> set scored the target a perfect `1.0` on both splits. The loop correctly stopped
+> before turn 1 with a `SATURATED` warning. Only after we added a criterion the
+> target actually *failed* — restoring room to improve — could the loop measure,
+> and then merge, a real improvement.
 
-**Aim for a baseline that leaves room.** A good starting set scores the *current*
-target somewhere clearly below the ceiling, so a real gain is visible above the
-measurement noise.
+**Aim for a baseline with headroom.** A good starting set scores the *current*
+target clearly below the ceiling, so a real gain is visible above the measurement
+noise.
 
 ---
 
 ## 2. Choosing the cases (the inputs)
 
-The inputs are the situations you put the target through. Pick them to **probe
-where the target is weak**, across the breadth of its real job:
+The inputs are the situations you put the target through. Choose them to **probe
+where the target is weak**, across the full breadth of its real job:
 
-- **Representative of real production**, not toy / happy-path. If your set only
-  contains the easy inputs, a passing score means nothing about real use.
+- **Use inputs that represent real production traffic**, not toy or happy-path
+  ones. If the set contains only easy inputs, a passing score says nothing about
+  real use.
 - **Aim at the failure modes that matter:**
-  - *Adversarial / underspecified* — ambiguous, self-contradictory, or
-    missing-context inputs the target tends to mishandle.
+  - *Ambiguous or underspecified inputs* — self-contradictory, or missing the
+    context the target needs; the kind it tends to mishandle.
   - *Hallucination bait* — inputs where the tempting answer is to **invent** a
-    detail, cause, or fact that isn't present, so a good target must say "not
-    specified" instead of fabricating.
-  - *Realistic hard cases* — the inputs the target meets in production but handles
-    inconsistently. These are the most valuable, and they belong in **held-out**
-    (see §4).
-  - *Spread across the job* — probe the target's breadth, not one narrow skill.
+    detail, cause, or fact that is not there. A good target must say "not
+    specified" instead of making one up.
+  - *Realistic hard cases* — inputs the target actually meets in production but
+    handles inconsistently. These are the most valuable ones, and they belong in
+    **held-out** (see §4).
+  - *Breadth* — spread the cases across the target's whole job, not one narrow
+    skill.
 - **A few genuinely probing cases beat a pile of near-duplicates.** Variety of
-  failure mode > volume.
+  failure modes matters more than volume.
 
-### You own the inputs, not just the rubric
+### You own the inputs, not just the grading criteria
 
-The load-bearing guard is that **you supply your own real cases** (invariant S5).
-The skill can *draft* candidate inputs for you at cold start — the **Bootstrapper**
-actor exists for exactly this, and it deliberately aims at weaknesses — but it
-drafts **candidates only**. You approve, prune, and add the hard cases it missed.
-Rubber-stamping an AI-drafted set is the weak version of this guard: the model and
-the case-writer share blind spots, and the loop ends up optimizing toward a
-self-consistent illusion. (See
+The guard that carries the most weight is this: **you supply your own real cases**
+(safety rule S5). At cold start the skill can *draft* candidate inputs for you —
+that is exactly what the **Bootstrapper** role is for, and it deliberately aims at
+the target's weaknesses — but what it produces are **candidates only**. You approve
+them, prune them, and add the hard cases it missed. Rubber-stamping an AI-drafted
+set weakens the guard: the model and the case-writer then share the same blind
+spots, and the loop ends up optimizing toward a self-consistent illusion. (See
 [`../../skills/agent-coach/agents/bootstrapper.md`](../../skills/agent-coach/agents/bootstrapper.md).)
 
 ---
 
-## 3. Writing good rubric criteria — the craft most people get wrong
+## 3. Writing good grading criteria — the craft most people get wrong
 
-Each case gets **5–7 yes/no criteria**. This is the highest-leverage and least
-obvious skill in the whole exercise, because the criteria *are* your definition of
-"good." Get them sharp and the loop measures real quality; get them vague or
-tangled and it measures noise.
+Each case gets **5–7 yes/no criteria**. Writing them well is the highest-leverage
+and least obvious skill in this whole exercise, because the criteria *are* your
+definition of "good". Sharp criteria make the loop measure real quality; vague or
+tangled ones make it measure noise.
 
-**One criterion = one independently-checkable thing.** Don't bundle. "Did it find
-the bug **and** fix it **and** explain it?" is three questions wearing a trench
-coat — split it into three, each scored on its own. The grader judges each
-criterion in isolation, and that granularity is exactly what lets the loop detect a
-small, real movement.
+**One criterion checks one thing.** Don't bundle. "Did it find the bug **and** fix
+it **and** explain it?" is really three questions — split it into three criteria,
+each scored on its own. The grader judges each criterion in isolation, and exactly
+that granularity is what lets the loop detect a small but real improvement.
 
-**Criteria are the *criteria* for a good answer, not the answer itself.** Write
-"Did it propose a parameter-binding (prepared-statement) fix?" — not "Did it output
-exactly *this* code?" You are defining what a good response must contain, not
-pinning one golden string.
+**A criterion describes what a good answer contains — not the one correct answer.**
+Write "Did it propose a parameter-binding (prepared-statement) fix?" — not "Did it
+output exactly *this* code?" You are defining the properties of a good response,
+not pinning a single golden string.
 
-**Include negative / guard criteria — the "didn't fabricate" axis.** Some of your
-most valuable criteria are checks for what the target must **avoid**: "Did it AVOID
+**Include negative criteria — the "did not make things up" axis.** Some of your
+most valuable criteria check what the target must **avoid**: "Did it AVOID
 inventing a cause not present in the report?", "Did it AVOID asserting a severity
-when the input doesn't support one?" These are load-bearing — they are what catch
-the *overfit-by-hallucination* trajectory the held-out guard exists to stop. For a
-negative criterion, `passed = true` means the output **avoided** the bad behavior;
-make sure the polarity is unmistakable.
+the input doesn't support?" These guard criteria matter enormously: they catch a
+prompt that "improves" by hallucinating — the exact path the held-out check exists
+to stop. For a negative criterion, `passed = true` means the output **avoided**
+the bad behavior; make the direction of the question unmistakable.
 
-**Make criteria orthogonal.** Two specific traps, both real:
+**Keep criteria independent of each other.** Two specific traps, both real:
 
-- *Don't double-count one dimension.* Two criteria that test the same thing inflate
-  its weight and crowd out everything else.
-- *Don't add a criterion that **conflicts** with another.* A criterion that fights
-  an existing one caps that case below 100% **forever** and poisons the signal.
+- *Don't test the same thing twice.* Two criteria that check one dimension double
+  its weight in the score and crowd out everything else.
+- *Don't add a criterion that **conflicts** with an existing one.* A criterion
+  that fights another caps that case below 100% **forever** and poisons the
+  signal.
 
-  > **Real example.** On an ambiguous "is this even a bug?" case, our rubric already
-  > rewarded *not* inventing a severity ("AVOID assigning a severity when it isn't
-  > knowable"). A proposed *format* criterion — "must label severity as one of
-  > `P0`–`P3`" — directly contradicts it: the correct answer (mark it undetermined)
-  > can satisfy only one. We dropped the conflicting criterion and used an
-  > **orthogonal** one instead (require a `Confidence:` line — a dimension no other
-  > criterion touched). Orthogonal criteria add signal; conflicting ones destroy it.
+  > **A real example.** On an ambiguous "is this even a bug?" case, our rubric
+  > already rewarded *not* inventing a severity ("AVOID assigning a severity when
+  > it isn't knowable"). Someone proposed a *format* criterion — "must label
+  > severity as one of `P0`–`P3`" — which directly contradicts it: the correct
+  > answer (mark the severity undetermined) can satisfy only one of the two. We
+  > dropped the conflicting criterion and added an **orthogonal** one instead —
+  > "require a `Confidence:` line" — a dimension no other criterion touched.
+  > Independent criteria add signal; conflicting criteria destroy it.
 
-**Make each criterion unambiguous for a temperature-0 grader.** The Grader runs at
-temperature 0 and must resolve every borderline the *same way every time* — that
-zero-variance grading is what the noise margin depends on. A vague criterion ("Is
-the answer good?", "Is it well written?") forces a coin-flip that reappears as
-grading noise and swamps the real signal. Rule of thumb: **if you couldn't grade it
-consistently by hand, neither can the model.** Prefer checks you can verify
-mechanically:
+**Make every criterion unambiguous for a temperature-0 grader.** The grader runs
+at temperature 0 and must resolve every borderline the *same way every time* —
+that zero-variance grading is what the noise margin depends on. A vague criterion
+("Is the answer good?", "Is it well written?") forces a judgment call, and that
+judgment call comes back as grading noise that drowns the real signal. Rule of
+thumb: **if you couldn't grade it consistently by hand, neither can the model.**
+Prefer checks that are close to mechanical:
 
 | Vague (injects noise) | Crisp (measures cleanly) |
 |---|---|
@@ -129,67 +135,72 @@ mechanically:
 | "Did it handle the edge case well?" | "Did it state that the input specifies no salary, rather than inventing one?" |
 | "Is the summary good?" | "Is every decision in the summary actually present in the source notes?" |
 
-**Why 5–7.** Enough criteria to give a partial-credit gradient (so a change can move
-the score a little), few enough to stay sharp. Scoring is `Σ passed / Σ total` over
-active cases, so a case with more criteria weighs proportionally more — keep the
-counts deliberate.
+**Why 5–7 criteria?** Enough that a change can move the score in small steps
+(partial credit), few enough that each criterion stays sharp. The score is
+`Σ passed / Σ total` over the active cases, so a case with more criteria
+automatically weighs more — keep the counts deliberate.
 
 ---
 
 ## 4. The train / held-out split
 
-The split is what turns a score into evidence of *generalization*.
+The split is what turns a score into evidence of *generalization* — proof that a
+change works beyond the cases it was tuned on.
 
-- **Held-out is the moat** — the cases the loop **never** optimizes against. It is
-  your only check that a change generalizes instead of memorizing train. A change
-  that lifts train but drops held-out beyond the noise margin triggers a terminal
-  **HALT** (overfitting caught).
-- **Reality-first.** Put your hardest, most production-like cases in **held-out**.
-  `split_goldenset.py` does this automatically (`realistic: true` → held-out first),
-  or you can set `split` by hand.
-- **Held-out must not be a correlated twin of train.** If both splits share the same
-  easy distribution, overfitting sails through undetected — the held-out check only
-  works when held-out covers situations train doesn't. Make them genuinely
-  different *real* cases.
-- **Sizes:** active `train ≥ 5`, `heldout ≥ 3` (the size gate, S5). The skill warns
-  hard below this. Bigger is a steadier signal; balance it against per-run cost.
+- **Held-out is the last line of defense** — the cases the loop is **never**
+  allowed to optimize against. It is your only check that a change generalizes
+  instead of memorizing train. A change that lifts train but drops held-out beyond
+  the noise margin triggers a terminal **HALT**: overfitting, caught.
+- **Reality first.** Put your hardest, most production-like cases in **held-out**.
+  `split_goldenset.py` does this automatically (cases marked `realistic: true` go
+  to held-out first), or you can set each case's `split` by hand.
+- **Held-out must not be a twin of train.** If both splits share the same easy
+  distribution, overfitting sails through undetected — the held-out check only
+  works where held-out covers situations train doesn't. Make the two splits
+  genuinely different *real* cases.
+- **Sizes:** at least 5 active train cases and 3 held-out cases (`train ≥ 5`,
+  `heldout ≥ 3` — the S5 size gate). The skill warns hard below these numbers. A
+  bigger set gives a steadier signal; balance that against per-run cost.
 
 ---
 
-## 5. Calibration sanity check — is the set even usable?
+## 5. The calibration check — can this set measure anything at all?
 
-Before turn 1 the loop runs the target `k_calib` times on fixed inputs, grades each,
-and derives the measurement-noise margins `eps_train` / `eps_heldout` — then checks
-whether the gate is **satisfiable** given your baseline.
+Before turn 1, the loop runs the target `k_calib` times on the same fixed inputs,
+grades every run, and measures how much the score wobbles. That wobble becomes the
+noise margins `eps_train` / `eps_heldout`. Then it checks whether the merge gate is
+even **satisfiable** given your baseline.
 
-If `calibrate_noise.py` returns **`gate_satisfiable: false`** (equivalently
+If `calibrate_noise.py` returns **`gate_satisfiable: false`** (equivalently,
 `eps_train ≥ 1 − baseline_train`), your set is too easy or too small: the noise
-margin meets or exceeds the room left to improve, so **no** change could ever clear
-the gate. The fix is a **better set** (harder / currently-failing cases) or a higher
-`k_calib` — *not* more proposing. Heed the warning; it is the measurement telling
-you it can't see progress through the noise. (A `SATURATED` warning is the same
-signal at the ceiling: the baseline is already ≈ `1.0`.)
+margin is at least as large as all the room left to improve, so **no** change
+could ever clear the gate. The fix is a **better set** — harder cases, cases the
+target currently fails — or a higher `k_calib`. It is *not* "keep proposing." Take
+the warning seriously: it is the measurement telling you it cannot see progress
+through the noise. (A `SATURATED` warning is the same message at the ceiling: the
+baseline is already ≈ `1.0`.)
 
 ---
 
-## 6. Evolving the set between runs
+## 6. Growing the set between runs
 
-The set is **frozen within a run** (a `split_hash` is re-checked every turn; any
-mid-run edit is an error) and **versioned between runs**. Growing it well is how the
-target keeps improving past the first plateau:
+Within one run the set is **frozen** — a `split_hash` is re-checked every turn,
+and any mid-run edit is an error. Between runs it is **versioned**, and growing it
+well is how the target keeps improving past its first plateau:
 
-- **Fold failures back in.** Every discarded / halted attempt can log a
-  `candidate_input` in `failure-log.jsonl` — an input that *would* catch the gap the
-  run just revealed. Promote the good ones into the next version's `cases[]` (this is
-  the evolution bridge, S6).
-- **Retire, don't delete, dead cases.** A case every version now passes has lost its
-  discriminative power. Set `status: "retired"` — it stays in the file for the record
-  but is excluded from scoring. (Deleting loses the history.)
-- **Version + changelog.** Bump `version`, set `parent_version`, and write one line
-  of `changelog` saying what you added and what you retired. **Scores compare only
-  within a version** — never put two versions' scores head-to-head, and keep the
-  grader pinned (`grader.version_id`) so a cross-run trend reflects the *target*
-  changing, not the *ruler*.
+- **Fold failures back in.** Every discarded or halted attempt can log a
+  `candidate_input` in `failure-log.jsonl` — an input that *would* catch the gap
+  that attempt just revealed. Promote the good ones into the next version's
+  `cases[]`. (This is the S6 evolution bridge.)
+- **Retire dead cases; don't delete them.** A case that every version now passes
+  has lost its power to discriminate. Set `status: "retired"` — the case stays in
+  the file for the record but is excluded from scoring. (Deleting it would erase
+  the history.)
+- **Version it, with a changelog.** Bump `version`, set `parent_version`, and
+  write one line of `changelog` saying what you added and what you retired.
+  **Scores are only comparable within one version** — never put two versions'
+  scores head to head — and keep the grader pinned (`grader.version_id`), so that
+  a cross-run trend reflects the *target* changing, not the *ruler*.
 
 ---
 
@@ -197,22 +208,23 @@ target keeps improving past the first plateau:
 
 | Anti-pattern | Why it breaks the loop |
 |---|---|
-| **Flattering / saturated set** (everything passes) | No gradient; the gate can certify nothing → the loop refuses to run |
-| **Correlated held-out** (a twin of train) | Overfitting goes undetected — held-out only guards what train doesn't cover |
-| **Vague / subjective criteria** | Temperature-0 grading can't resolve them consistently → grading noise drowns the signal |
-| **Duplicate or conflicting criteria** | Double-counts a dimension, or caps a case below 100% forever (unsatisfiable) |
-| **Optimizing against held-out** (peeking / tuning to it) | Destroys your only generalization guard |
-| **Too-small set** | `eps` is a noisy estimate; the gate wobbles and merges or rejects on luck |
-| **Criteria beyond the model/tools ceiling** | Permanent plateau — no wording extracts a capability the model lacks; change the model/tools, not the words |
-| **Model writes both inputs and rubric** | A self-graded exam (S5) — the loop optimizes toward the model's own blind spots |
+| **Flattering / saturated set** (everything passes) | No room to improve; the gate can certify nothing → the loop refuses to run |
+| **Held-out that mirrors train** | Overfitting goes undetected — held-out only guards situations train doesn't cover |
+| **Vague / subjective criteria** | A temperature-0 grader can't resolve them consistently → grading noise drowns the signal |
+| **Duplicate or conflicting criteria** | Double-counts one dimension, or caps a case below 100% forever (unsatisfiable) |
+| **Optimizing against held-out** (peeking at it, tuning to it) | Destroys your only generalization guard |
+| **Too-small set** | `eps` becomes a noisy estimate; the gate wobbles and merges or rejects on luck |
+| **Criteria beyond what the model/tools can do** | A permanent plateau — no wording extracts a capability the model lacks; change the model or tools, not the words |
+| **The model writes both inputs and criteria** | A self-graded exam (S5) — the loop optimizes toward the model's own blind spots |
 
 ---
 
 ## 8. A worked example (from scratch)
 
-Target: a **meeting-minutes summarizer** (`./summarizer.md`). Two cases — one clear
-`train`, one realistic `heldout` trap — show case selection, the negative-guard
-axis, and split rationale. (Full schema:
+The target: a **meeting-minutes summarizer** (`./summarizer.md`). Two cases — one
+clear `train` case and one realistic `heldout` trap — are enough to show how cases
+are chosen, how the "did not make things up" guard works, and why each case goes
+into its split. (Full schema:
 [`../../skills/agent-coach/references/data-formats.md`](../../skills/agent-coach/references/data-formats.md).)
 
 ```json
@@ -259,33 +271,33 @@ axis, and split rationale. (Full schema:
 }
 ```
 
-**Why this works.** The `train` case is unambiguous and checks plain extraction
-*plus* a guard (criterion 4: don't invent action items). The `heldout` case is a
-**realistic trap** placed in held-out per reality-first: its rubric is built around
-the *don't-fabricate* axis (criteria 1, 2, 5), so the tempting "just summarize a
-decision" overfit on train would **fail** here — which is precisely the
+**Why this works.** The `train` case is unambiguous: it checks plain extraction
+*plus* one guard (criterion 4: don't invent action items). The `heldout` case is a
+**realistic trap**, placed in held-out per reality-first: its rubric is built
+around the *don't-fabricate* axis (criteria 1, 2, 5). A change that overfits train
+by learning to "always summarize a decision" would **fail** here — exactly the
 generalization failure the held-out split exists to catch. Every criterion is a
-crisp yes/no a temperature-0 grader can resolve the same way every time, and none of
-them conflict.
+crisp yes/no that a temperature-0 grader resolves the same way every time, and
+none of them conflict.
 
-Build out to `train ≥ 5` / `heldout ≥ 3` with more cases in the same spirit, then
-let the loop calibrate — if it reports the gate is satisfiable, you have a set worth
-running.
+Build the set out to `train ≥ 5` / `heldout ≥ 3` with more cases in the same
+spirit, then let the loop calibrate. If it reports the gate is satisfiable, you
+have a set worth running.
 
 ---
 
 ## See also
 
-- [`run-config.md`](./run-config.md) — how the **Runner** executes the target "like
-  real use," and the pre-flight checks (including grader temperature 0 and actor
-  separation that keep grading honest).
-- [`running.md`](./running.md) — the end-to-end run: validate → baseline → loop →
-  batch commit/revert.
+- [`run-config.md`](./run-config.md) — how the **Runner** executes the target
+  "like real use", and the pre-flight checks (grader at temperature 0, role
+  separation) that keep grading honest.
+- [`running.md`](./running.md) — the run end to end: validate → baseline → loop →
+  commit or revert as a batch.
 - [`../../skills/agent-coach/references/data-formats.md`](../../skills/agent-coach/references/data-formats.md)
   — the authoritative `golden-set.json` schema, field by field.
 - [`../../skills/agent-coach/references/safety-invariants.md`](../../skills/agent-coach/references/safety-invariants.md)
-  — S1–S7, including S5 (human-owned sourcing + size gate).
-- [`../../skills/golden-set-drafter/SKILL.md`](../../skills/golden-set-drafter/SKILL.md) — a skill that
-  drafts a starting set for you (council-drafted cases + train rubrics, emitted
-  unfrozen) while leaving **every held-out rubric for you to author** — the craft
-  you apply at that gate is exactly this guide.
+  — S1–S7 in full, including S5 (human-owned sourcing + the size gate).
+- [`../../skills/golden-set-drafter/SKILL.md`](../../skills/golden-set-drafter/SKILL.md) — a companion
+  skill that drafts a starting set for you (council-drafted cases + train rubrics,
+  emitted unfrozen) while leaving **every held-out rubric for you to write** — and
+  the craft you apply at that gate is exactly this guide.

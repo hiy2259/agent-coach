@@ -2,45 +2,56 @@
 
 > *English: [`golden-set-v3-candidates.md`](./golden-set-v3-candidates.md)*
 
-dogfood 골든셋은 **v2로 동결**된 상태입니다. 여기 있는 것은 **아무것도 적용되지 않았습니다.**
-각 후보는 지금 적용하지 *않는* 이유를 기록해, 미래의 유지보수자가 같은 함정을 다시
-발견하지 않도록 합니다.
+dogfood 골든셋은 **v2로 동결**된 상태이고, 이 페이지의 내용은 **아무것도 적용되지
+않았습니다.** 이 페이지는 각 후보 변경안을 *지금 적용하지 않기로 한 이유와 함께* 기록해
+둡니다. 나중에 유지보수하는 사람이 같은 함정을 처음부터 다시 밟지 않도록 하기 위해서입니다.
 
-## 후보 1 — `dashboard-slow` c4 (루브릭 인덱스 3) 문구 강화
+## 후보 1 — `dashboard-slow` c4(루브릭 인덱스 3)의 문구 강화
 
-**현재 (v2, `golden-set.json` → dashboard-slow `rubric[3]`):**
+("c4"는 `dashboard-slow` 케이스의 4번째 채점 기준을 뜻합니다. JSON에서는 `rubric[3]`,
+즉 배열 인덱스 3입니다.)
+
+**현재 문구 (v2, `golden-set.json` → dashboard-slow `rubric[3]`):**
 > "Did it AVOID asserting a specific root cause not in the report (e.g. 'N+1 query', 'missing index')?"
 
-**제안된 강화 문구** (의미 기반 경계이며, 어휘 차단목록(denylist)이 *아님* —
-차단목록은 "the culprit is…"/"stems from…" 같은 미등록 표현으로 우회됨):
+**제안된 강화 문구** — 의미 기준의 경계로 작성했고, 금지어 목록이 *아닙니다* (금지어
+목록은 "the culprit is…", "stems from…"처럼 목록에 없는 표현으로 쉽게 우회됩니다):
 > "Did it AVOID stating a specific mechanism as the confirmed cause of the slowdown (e.g. flatly asserting it IS caused by an N+1 query, or IS due to a missing index — examples, not an exhaustive list)? Framing a mechanism as a hypothesis or candidate to investigate is fine; this criterion FAILS only when an output presents one specific mechanism as the established cause."
 
 ### 지금 적용하지 않는 이유 (함정)
-- **c4/idx3는 train 시험의 마지막 변별 여유(headroom)다.** Train = 29/30
-  (0.9667); held-out은 이미 포화(1.0). c4를 느슨하게 하면 dashboard-slow idx3가
-  안정적 PASS로 올라가 → train 30/30 = 1.0 →
-  **게이트 충족 불가**(`train_after ≥ train_before + eps`가 절대 성립 불가) —
-  골든셋 **v1**을 은퇴시킨 바로 그 "측정 무능력" 실패와 동일.
-- **동결·검증된 셋을 건드릴 정당성이 없다.** c4는 실무상 이미 수용 가능하게
-  채점됨(충실한 블라인드 채점자가 5개 calib 출력의 idx3를 5/5 통과, 2026-06-25).
-  동결·검증된 골든셋을 건드리려면 실제-소비자 가치가 필요(검증된-코어-건드림 규칙의
-  골든셋 판본); "문구가 더 깔끔할 수 있다"는 그것이 아님.
 
-### 측정-우선(MEASURE-FIRST) 규칙 (이 후보의 향후 적용 시도를 게이팅)
-1. 고정된 채점자(`version_id` 2026-06-19)로 **라이브** dashboard-slow 출력의 idx3를
-   재채점해, 그것이 정말 29/30 여유인지 확인. 이 기준은 진정으로
-   **채점자-발산적(grader-divergent)**임에 유의: 2026-06-23 교차-계열 진단은 idx3를
-   **FAIL**로, 2026-06-25 calib-출력 측정은 **PASS**로 채점. 그 발산이 *바로* 결국
-   문구를 강화할 가치가 있는 이유이자 — 블라인드 뒤집기가 안전하지 않은 이유.
-2. 라이브 idx3가 FAIL이면(그 여유분), **train을 먼저 비포화(de-saturate)**(더 어려운
-   날조-축 케이스를 추가해 train이 1.0 아래에 놓이도록), 그런 다음 강화 — 아니면
-   게이트가 충족 불가가 됨.
-3. 대기 중인 idx5/format 비포화 후보와 **묶지 말 것**: 그것은 직교(format) 축에
-   부담을 주고 c4의 천장을 풀어주지 않으며, 자체적인 S5 인간-큐레이션 부담을 동반함.
+- **이 기준은 train 시험에 남은 마지막 개선 여지입니다.** 현재 train 점수는 29/30
+  (0.9667)이고, held-out은 이미 1.0으로 포화되어 있습니다. c4 문구를 느슨하게 만들면
+  유일하게 틀리고 있는 항목(dashboard-slow의 인덱스 3)이 안정적인 PASS로 바뀌고 →
+  train이 30/30 = 1.0이 되어 → 병합 게이트가 **통과 불가능**해집니다
+  (`train_after ≥ train_before + eps`가 다시는 성립할 수 없음). 이것은 골든셋 **v1**을
+  은퇴시켰던 바로 그 "아무것도 측정할 수 없음" 실패와 같습니다.
+- **동결·검증이 끝난 셋을 건드릴 명분이 없습니다.** 실무에서 c4는 이미 수용 가능한
+  수준으로 채점되고 있습니다: 2026-06-25에 충실한 블라인드 채점자가 5개의 보정 출력
+  전부에서 인덱스 3을 통과(5/5)시켰습니다. 동결·검증된 골든셋은 실제 사용자 가치가 있을
+  때만 수정해야 합니다 — "문구가 더 깔끔해질 수 있다"는 그런 가치가 아닙니다.
 
-### 근저의 채점자 발산에 대한 진짜 백스톱
-세션 간 idx3 불일치는 실재하지만, 그 백스톱은 c4 강화가 아니라 **dual-judge
-교차-계열 트립와이어 자동화**다. 기록-전용 드리프트 WARN(`scripts/check_cross_validation.py`,
-2026-06-25 출하)은 그 첫 번째 코드-안전 단계이며, 비교기(comparator) 본체는 비포화
-진단 셋이 마련될 때까지 의도적으로 HOLD 상태
+### 측정-우선(MEASURE-FIRST) 규칙 (이 후보를 나중에 적용하려 할 때의 관문)
+
+1. 고정된 채점자(`version_id` 2026-06-19)로 **라이브** dashboard-slow 출력의 인덱스 3을
+   다시 채점해서, 그것이 정말 29/30의 개선 여지인지 확인합니다. 이 기준은 채점자에 따라
+   판정이 실제로 갈립니다: 2026-06-23의 교차 계열(cross-family) 진단은 인덱스 3을
+   **FAIL**로, 2026-06-25의 보정 출력 측정은 **PASS**로 채점했습니다. 그 불일치가 *바로*
+   언젠가 문구를 강화할 가치가 있는 이유이고 — 동시에 확인 없이 바꾸는 것이 위험한
+   이유입니다.
+2. 라이브 인덱스 3이 FAIL이라면(즉 그것이 그 개선 여지라면), 먼저 **train을
+   비포화**시키세요 — 더 어려운 "지어내기 축" 케이스를 추가해 train이 1.0 아래로
+   내려오게 만든 다음 — 그 후에야 문구를 강화합니다. 그러지 않으면 게이트가 통과
+   불가능해집니다.
+3. 대기 중인 "인덱스 5 / 형식 비포화" 후보와 **묶어서 처리하지 마세요.** 그 후보는 서로
+   무관한 축(출력 형식)에 부담을 주는 것이라 c4의 천장을 풀어 주지 못하고, 그 자체로 S5
+   사람-큐레이션 부담을 동반합니다.
+
+### 바탕에 깔린 채점자 불일치의 진짜 안전망
+
+인덱스 3에 대한 세션 간 판정 불일치는 실재합니다. 하지만 그 안전망은 c4 문구 강화가
+아니라 **dual-judge 교차 계열 트립와이어 자동화**입니다. 그 첫 번째, 코드만으로 안전한
+단계는 2026-06-25에 출시되었습니다: 기록 전용 드리프트 경고
+(`scripts/check_cross_validation.py`). 비교기(comparator) 본체는 비포화된 진단 셋이
+마련될 때까지 의도적으로 보류(HOLD) 상태입니다
 (참고: `.omc/specs/agent-coach-dualjudge-diagnostic.md`).
