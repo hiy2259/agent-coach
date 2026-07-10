@@ -2,8 +2,8 @@
 
 > agent-coach is a Claude Code skill, so you **drive it in plain language**. You
 > sit *on* the loop — designing the exam and the config — not *in* it, approving
-> every iteration. In normal use you never call the scripts by hand; the skill's
-> orchestrator does. Your one irreversible action comes at the very end:
+> every iteration. In normal use you never call the scripts by hand; the skill
+> runs them for you. Your one irreversible action comes at the very end:
 > **commit or revert** the staged result.
 
 This page walks a run end to end: the kickoff, what the skill does, three
@@ -129,7 +129,7 @@ current turn and phase, and `resume.py` re-enters from the last completed step �
 A sample `state.json` (alongside its `history.jsonl` and `failure-log.jsonl`)
 ships at
 [`../../examples/agent-coach/en/loop-state/`](../../examples/agent-coach/en/loop-state),
-so you can see exactly what the resumable state machine records.
+so you can see exactly what the skill writes down to make a run resumable.
 
 ---
 
@@ -140,10 +140,10 @@ it — that would be a self-graded exam. The missing state is detected
 *deterministically* (`split_goldenset.py op=state` returns `missing`/`empty`), and
 then:
 
-1. **Seed.** Pull inputs from your logs if you have them, and/or let the
-   **Bootstrapper** draft input *candidates*. Run the Bootstrapper even when logs
-   exist, if the logs are easy or happy-path only — a flattering set will find
-   nothing.
+1. **Gather starting inputs.** Pull inputs from your logs if you have them,
+   and/or let the **Bootstrapper** draft input *candidates*. Run the Bootstrapper
+   even when logs exist, if the logs are easy or happy-path only — a set the
+   target already passes everywhere will surface no weaknesses.
 2. **Expose failures.** The target runs once (via the Runner) on the candidates,
    so you can see where it actually fails.
 3. **You curate.** *You* approve or prune the inputs, and add the hard cases that
@@ -187,7 +187,7 @@ and `budget.max_usd_per_turn` in `run-config.json`. Total cost scales with
 ## See also
 
 - [`golden-set.md`](./golden-set.md) — building the exam the loop grades against
-  (the highest-leverage thing you own).
+  (the part you own that most decides the outcome).
 - [`run-config.md`](./run-config.md) — every `run-config.json` field, and the
   pre-flight check that enforces honest measurement.
 - [`../../skills/agent-coach/references/safety-invariants.md`](../../skills/agent-coach/references/safety-invariants.md)

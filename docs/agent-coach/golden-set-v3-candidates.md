@@ -2,8 +2,8 @@
 
 > *한국어: [`golden-set-v3-candidates.ko.md`](./golden-set-v3-candidates.ko.md)*
 
-The dogfood golden set stays **frozen at v2**, and nothing on this page has been
-applied. This page records each candidate change *together with the reason it was
+The golden set used to test this skill on itself (the "dogfood" set) stays
+**frozen at v2**, and nothing on this page has been applied. This page records each candidate change *together with the reason it was
 rejected for now*, so that a future maintainer does not have to rediscover the
 same trap.
 
@@ -30,8 +30,8 @@ culprit is…" or "stems from…"):
   That is exactly the "cannot measure anything" failure that retired golden-set
   **v1**.
 - **There is no justification for touching a frozen, verified set.** In practice
-  c4 already grades acceptably: on 2026-06-25, a faithful blind grader passed all
-  5 calibration outputs on index 3 (5/5). A frozen, verified golden set should
+  c4 already grades acceptably: on 2026-06-25, a grader working blind (without
+  seeing any earlier verdicts) passed all 5 calibration outputs on index 3 (5/5). A frozen, verified golden set should
   only be modified for real consumer value — "the wording could be cleaner" is
   not that.
 
@@ -39,9 +39,9 @@ culprit is…" or "stems from…"):
 
 1. Re-grade the **live** dashboard-slow output's index 3 with the pinned grader
    (`version_id` 2026-06-19), to confirm that it really is the 29/30 headroom.
-   Note that this criterion genuinely divides graders: a 2026-06-23 cross-family
-   diagnostic graded index 3 **FAIL**, while a 2026-06-25 measurement on the
-   calibration outputs graded it **PASS**. That disagreement is *why* the wording
+   Note that this criterion genuinely divides graders: on 2026-06-23, a check by
+   a grader from a different model family graded index 3 **FAIL**, while a
+   2026-06-25 measurement on the calibration outputs graded it **PASS**. That disagreement is *why* the wording
    is worth tightening eventually — and also why flipping it blind is unsafe.
 2. If the live index 3 grades FAIL (i.e. it is the headroom), first
    **de-saturate train** — add a harder fabrication-axis case so that train sits
@@ -53,9 +53,12 @@ culprit is…" or "stems from…"):
 
 ### The real backstop for the underlying grader disagreement
 
-The cross-session disagreement on index 3 is real, but its backstop is the
-**dual-judge cross-family tripwire automation** — not a tighter c4. Its first,
-code-safe step shipped on 2026-06-25: a record-only drift warning
-(`scripts/check_cross_validation.py`). The comparator body itself stays
-deliberately ON HOLD until a de-saturated diagnostic set exists (see
+The cross-session disagreement on index 3 is real, but its backstop is an
+**automatic watchdog** — not a tighter c4: two graders from different model
+families (a "dual judge") grade the same outputs, and an alarm fires when their
+verdicts split (the "cross-family tripwire"). Its first step shipped on
+2026-06-25: a warning that only records the disagreement and changes no behavior
+(`scripts/check_cross_validation.py`). The full comparator — the automation that
+would actually compare the verdicts and act on them — stays deliberately ON HOLD
+until a de-saturated diagnostic set exists (see
 `.omc/specs/agent-coach-dualjudge-diagnostic.md`).

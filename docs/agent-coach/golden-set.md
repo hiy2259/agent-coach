@@ -191,7 +191,8 @@ well is how the target keeps improving past its first plateau:
 - **Fold failures back in.** Every discarded or halted attempt can log a
   `candidate_input` in `failure-log.jsonl` — an input that *would* catch the gap
   that attempt just revealed. Promote the good ones into the next version's
-  `cases[]`. (This is the S6 evolution bridge.)
+  `cases[]`. (This is the S6 evolution path: today's failures become the next
+  version's cases.)
 - **Retire dead cases; don't delete them.** A case that every version now passes
   has lost its power to discriminate. Set `status: "retired"` — the case stays in
   the file for the record but is excluded from scoring. (Deleting it would erase
@@ -200,7 +201,7 @@ well is how the target keeps improving past its first plateau:
   write one line of `changelog` saying what you added and what you retired.
   **Scores are only comparable within one version** — never put two versions'
   scores head to head — and keep the grader pinned (`grader.version_id`), so that
-  a cross-run trend reflects the *target* changing, not the *ruler*.
+  a cross-run trend reflects the *target* changing, not the *ruler* (the grader).
 
 ---
 

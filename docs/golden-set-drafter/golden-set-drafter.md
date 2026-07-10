@@ -53,7 +53,7 @@ option reference: [run-config](../agent-coach/run-config.md).
 | Artifact | Contents | Example |
 |---|---|---|
 | `golden-set.json` | train cases (inputs + grading criteria complete) + held-out cases (inputs only, **criteria empty**), unfrozen | [`draft-output/golden-set.example.json`](../../examples/golden-set-drafter/en/draft-output/golden-set.example.json) |
-| `GOLDEN-SET-DRAFT-README.md` | A runbook written in the language of your own cases: your 4 next steps + **the ten honest limitations** + a "Gate data" appendix holding the exact `op=split` command | Skeleton: [`runbook-template.md`](../../skills/golden-set-drafter/assets/runbook-template.md) |
+| `GOLDEN-SET-DRAFT-README.md` | A runbook (a step-by-step guide to what you do next) written in the language of your own cases: your 4 next steps + **the ten honest limitations** + a "Gate data" appendix holding the exact `op=split` command | Skeleton: [`runbook-template.md`](../../skills/golden-set-drafter/assets/runbook-template.md) |
 | `GOLDEN-SET-DRAFT-RUNLOG.json` | The record of the council debate, the ruler used, and the failure-exposure results | [`draft-output/GOLDEN-SET-DRAFT-RUNLOG.example.json`](../../examples/golden-set-drafter/en/draft-output/GOLDEN-SET-DRAFT-RUNLOG.example.json) |
 
 ## Why the held-out criteria arrive empty (the heart of the design)
@@ -103,11 +103,13 @@ steps (the emitted runbook walks you through them, written in terms of your own 
 
 - **v1 drafts fresh sets only.** Given an existing golden set as input, it states that
   update/evolve mode is a v2 feature and **stops** — it never half-updates.
-- The failure-exposure evidence is a **train-only heuristic**. The final authority on
-  whether the set can drive a run (discrimination / saturation) is agent-coach's
+- The failure-exposure evidence is a **train-only reference signal, not a
+  guarantee**. The final authority on whether the set can drive a run — whether it
+  can still tell good from bad, or is already saturated — is agent-coach's
   calibration step.
 - Train inputs AND train criteria are both AI-authored — a conscious v1 trade-off. What
-  seals it is the human-owned held-out criteria, plus agent-coach's S1 overfitting HALT.
+  contains that risk is the human-owned held-out criteria, plus agent-coach's S1
+  overfitting HALT.
 - Every emitted runbook carries **all ten honest limitations in full** — the emit code
   counts the numbered items and refuses to produce a runbook with fewer.
 
