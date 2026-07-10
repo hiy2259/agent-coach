@@ -5,7 +5,7 @@
 > 전체를 떠받칩니다. 첫째, **Runner(실행)는 운영에서 쓰는 모델·temperature 그대로**여야
 > 합니다. 그렇지 않으면 루프가 보정하는 노이즈가 실제 노이즈가 아니게 됩니다. 둘째,
 > **역할은 반드시 분리되어야** 합니다. 그렇지 않으면 채점이 슬그머니 자가 채점 시험으로
-> 변합니다. 이 둘 중 하나라도 틀리면, 골든셋이 아무리 좋아도 그 뒤의 모든 점수가 엉뚱한
+> 변합니다. 이 둘 중 하나라도 틀리면, golden set이 아무리 좋아도 그 뒤의 모든 점수가 엉뚱한
 > 것을 재게 됩니다.
 
 이 페이지는 `run-config.json`의 필드별 레퍼런스와, 그 규칙을 강제하는 사전
@@ -19,7 +19,7 @@
 
 ## 최소 설정
 
-골든셋이 이미 있는 상태에서 시작하는 것을 웜 스타트(warm start)라고 부릅니다. 그 경우 이
+golden set이 이미 있는 상태에서 시작하는 것을 warm start라고 부릅니다. 그 경우 이
 설정 하나면 충분합니다. (같은 파일이 복사해 쓸 수 있게
 [`../../examples/agent-coach/ko/run-config.example.json`](../../examples/agent-coach/ko/run-config.example.json)에도
 들어 있습니다.)
@@ -43,7 +43,7 @@
 
 - **`_note`** 는 사람을 위한 주석입니다. 이름이 `_`로 시작하는 필드는 파서가 무시하므로,
   파일에 자유롭게 메모를 남길 수 있습니다.
-- **최상위.** `target`과 `golden_set`은 실제 대상 파일과 그 시험지(골든셋)를 가리킵니다.
+- **최상위.** `target`과 `golden_set`은 실제 대상 파일과 그 시험지(golden set)를 가리킵니다.
   둘 다 상대 경로입니다.
 - **`runner`** 는 `claude-opus-4-8`을 **temperature 0.7**, 즉 *운영에서 실제로 쓰는
   모델·temperature 그대로* 사용합니다. 그래야 루프가 보정하는 노이즈가 `temperature: 0`으로
@@ -62,8 +62,8 @@
   실행이 멈춥니다.
 - **`tools.mode: "none"`** 은 대상이 순수 텍스트 입력/출력이라는 뜻입니다(v1 기본값).
 
-이 예시에 `bootstrapper` 블록이 없는 것은 웜 스타트(골든셋이 이미 있는 경우)이기
-때문입니다. [콜드 스타트](./running.ko.md#콜드-스타트-골든셋이-아직-없을-때)일 때만,
+이 예시에 `bootstrapper` 블록이 없는 것은 warm start(golden set이 이미 있는 경우)이기
+때문입니다. [cold start](./running.ko.md#cold-start-golden-set이-아직-없을-때)일 때만,
 grader와 다른 모델로 추가하세요.
 
 ---
@@ -89,7 +89,7 @@ agent-coach의 일곱 가지 안전 규칙 중 하나인 **S7**입니다. 버전
 변한 것인지"를 확인할 수 있습니다.
 
 **3. 제안한 자는 채점하지 않습니다.** `proposer.model`은 `grader.model`과 달라야
-합니다(콜드 스타트에서는 `bootstrapper.model`도 `grader.model`과 달라야 합니다). "네가
+합니다(cold start에서는 `bootstrapper.model`도 `grader.model`과 달라야 합니다). "네가
 *직접* 만든 변경이 도움이 됐어?"라는 질문을 받은 모델은 "그렇다"고 답하는 쪽으로 이미
 기울어 있습니다. 이것이 바로 안전 규칙 **S5**가 금지하는 자가 채점 시험입니다. 제안과
 채점을 서로 다른 모델에 맡겨야 역할 분리가 말뿐이 아니라 실제가 됩니다. 제안자가 Runner와 같은 모델을
@@ -101,7 +101,7 @@ agent-coach의 일곱 가지 안전 규칙 중 하나인 **S7**입니다. 버전
 
 | 블록 | 프로퍼티 | 타입 | 의미 | 설정 방법 |
 |---|---|---|---|---|
-| (최상위) | `target` | string | 실제 대상 파일의 상대 경로 | 골든셋의 `target`이 가리키는 것과 같은 파일 |
+| (최상위) | `target` | string | 실제 대상 파일의 상대 경로 | golden set의 `target`이 가리키는 것과 같은 파일 |
 | (최상위) | `golden_set` | string | `golden-set.json`의 상대 경로 | 예: `./golden-set.json` |
 | `runner` | `model` | string | 대상을 실행하는 모델 | **실제 운영 환경과 일치해야** 측정 노이즈가 진짜가 됩니다 |
 | `runner` | `temperature` | number | 실사용 temperature (`eps`를 만들어 내는 분산의 원천) | 실제 운영 temperature, 예: `0.7` (`0` 아님) |
@@ -111,12 +111,12 @@ agent-coach의 일곱 가지 안전 규칙 중 하나인 **S7**입니다. 버전
 | `grader` | `version_id` | string | 채점자가 나중에 달라졌는지(드리프트) 확인할 수 있게 남기는 버전 기록 | 날짜나 태그, 예: `"2026-06-16"` |
 | `proposer` | `model` | string | 턴마다 변경 한 건을 제안하는 모델 | **`grader.model`과 반드시 달라야 함** (제안 ≠ 채점) |
 | `proposer` | `temperature` | number | 집중된 제안을 위한 낮은 temperature | 예: `0.3` |
-| `bootstrapper` | `model` | string (선택) | 콜드 스타트에서 입력 후보를 초안 | 콜드 스타트에만 필요; 있다면 **`grader.model`과 달라야 함** |
+| `bootstrapper` | `model` | string (선택) | cold start에서 입력 후보를 초안 | cold start에만 필요; 있다면 **`grader.model`과 달라야 함** |
 | `calibration` | `k_calib` | number | 노이즈를 재기 위한 Runner 반복 실행 횟수 | **5 이상** (작으면 `eps` 추정이 불안정 → 경고) |
 | `loop` | `n_turns` | number | 최대 턴 수 | 기본 `10`; 더 길게 탐색하려면 올리세요 (비용도 함께 커집니다) |
 | `loop` | `no_progress_k` | number | `MERGE`/`SUB_KEEP` 없이 K턴 연속이면 정지 | 기본 `3` |
 | `loop` | `subtraction_every` | number | N턴마다 빼기 시도 | 기본 `3` |
-| `budget` | `max_usd_total` | number | 총 지출 상한 (권장이 아니라 강제 제약) | `n_turns` × 셋 크기로 가늠; 도달하면 실행 정지 |
+| `budget` | `max_usd_total` | number | 총 지출 상한 (권장이 아니라 강제 제약) | `n_turns` × set 크기로 가늠; 도달하면 실행 정지 |
 | `budget` | `max_usd_per_turn` | number | 턴당 지출 상한 | 한 턴이 비용을 폭주시키는 것을 막는 안전장치 |
 | `tools` | `mode` | `"none"` \| `"mocked"` | `none` = 순수 텍스트 입출력 대상 (v1 기본값) | `"none"` 유지; `"mocked"`는 아직 사양이 덜 정해진 v2 사안 |
 
@@ -129,7 +129,7 @@ agent-coach의 일곱 가지 안전 규칙 중 하나인 **S7**입니다. 버전
 
 - **에러 (실행 차단):** `runner`/`grader`/`proposer` 블록 또는 `model` 필드 누락 ·
   `grader.temperature ≠ 0` · `proposer.model == grader.model` ·
-  `bootstrapper.model == grader.model`(부트스트래퍼가 있을 때). 모델 id는 대소문자와
+  `bootstrapper.model == grader.model`(Bootstrapper가 있을 때). 모델 id는 대소문자와
   공백을 무시하고 비교하므로, `"Sonnet"`과 `"sonnet"`처럼 표기만 바꿔서 자가 채점 실행을
   통과시킬 수는 없습니다.
 - **경고 (주의하며 진행):** `runner.temperature == 0` (분산이 없어 `eps`가 하한까지 붕괴) ·
@@ -148,8 +148,8 @@ printf '%s' '{"config_path":"./run-config.json"}' | python3 skills/agent-coach/s
 
 - [`golden-set.ko.md`](./golden-set.ko.md): 이 설정이 돌리는 시험지. 성패를 가장 크게
   좌우하는 부분입니다.
-- [`running.ko.md`](./running.ko.md): 실행의 처음부터 끝까지(검증 → 베이스라인 → 루프 →
-  묶음 커밋/되돌리기), 그리고 콜드 스타트와 재개.
+- [`running.ko.md`](./running.ko.md): 실행의 처음부터 끝까지(검증 → baseline → 루프 →
+  묶음 커밋/되돌리기), 그리고 cold start와 재개.
 - [`../../skills/agent-coach/references/data-formats.md`](../../skills/agent-coach/references/data-formats.md):
   기준이 되는 `run-config.json` 스키마, 필드별 설명.
 - [`../../skills/agent-coach/references/safety-invariants.md`](../../skills/agent-coach/references/safety-invariants.md):

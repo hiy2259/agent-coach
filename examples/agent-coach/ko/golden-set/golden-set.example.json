@@ -1,5 +1,5 @@
 {
-  "_note": "포맷 설명용 축약 예시입니다. 실제 골든셋은 min_size(active train≥5 · heldout≥3)를 충족해야 합니다. '_' 접두 필드는 파서가 무시합니다.",
+  "_note": "포맷 설명용 축약 예시입니다. 실제 golden set은 min_size(active train≥5 · heldout≥3)를 충족해야 합니다. '_' 접두 필드는 파서가 무시합니다.",
   "target": "./agents/dev-agent.md",
   "version": "v2",
   "parent_version": "v1",
@@ -68,7 +68,7 @@
       "realistic": false,
       "status": "retired",
       "tags": ["trivial"],
-      "notes": "모든 버전이 통과 → 변별력 0. v2에서 은퇴(채점 제외, 기록은 보존). 골든셋 레벨의 '빼기' 예시.",
+      "notes": "모든 버전이 통과 → 변별력 0. v2에서 은퇴(채점 제외, 기록은 보존). golden set 레벨의 '빼기' 예시.",
       "input": "파이썬으로 'hello'를 출력하세요.",
       "rubric": ["hello를 출력하는 코드를 제시했는가?"]
     }
