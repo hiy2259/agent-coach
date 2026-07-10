@@ -88,13 +88,13 @@ value (for example `0.7`), **not** `0`.
 `0`, and `grader.version_id` records *which* ruler you used. At temperature 0,
 grading the same text twice returns the identical score — the Grader contributes
 **zero** randomness, so every bit of measured noise comes from the Runner, where
-it belongs (S7). The pinned version lets you audit later that a cross-run trend
+it belongs. That is **S7**, one of agent-coach's seven safety rules. The pinned version lets you audit later that a cross-run trend
 reflects the *target* improving, not the *ruler* drifting.
 
 **3. The one who proposes never grades.** `proposer.model` must differ from
 `grader.model` (and at cold start, `bootstrapper.model` must also differ from
 `grader.model`). A model asked "did your *own* change help?" is primed to say
-yes — the self-graded exam (S5). Putting propose and grade on different models is
+yes — the self-graded exam that safety rule **S5** forbids. Putting propose and grade on different models is
 what makes the separation real rather than nominal. The proposer *may* share the
 runner's model; the only hard wall is against the grader.
 
@@ -110,7 +110,7 @@ runner's model; the only hard wall is against the grader.
 | `runner` | `temperature` | number | Real-use temperature — the source of the variance behind `eps` | Your actual production temperature, e.g. `0.7` (not `0`) |
 | `runner` | `max_output_tokens` | number | Output cap for each target run | Enough for a full answer, e.g. `4096` |
 | `grader` | `model` | string | The grading model (kept the same across the run) | A capable model that is **different from the proposer** |
-| `grader` | `temperature` | number | **Must be `0`** — grading adds zero variance (S7) | Always `0` (the pre-flight errors otherwise) |
+| `grader` | `temperature` | number | **Must be `0`** — grading adds zero variance (safety rule S7) | Always `0` (the pre-flight errors otherwise) |
 | `grader` | `version_id` | string | A pin recorded so grader drift can be audited later | A date or tag, e.g. `"2026-06-16"` |
 | `proposer` | `model` | string | The model that proposes one change per turn | **Must differ from `grader.model`** (propose ≠ grade) |
 | `proposer` | `temperature` | number | Low temperature for focused proposals | e.g. `0.3` |
@@ -157,5 +157,5 @@ project root, not to this `docs/` page.)
 - [`../../skills/agent-coach/references/data-formats.md`](../../skills/agent-coach/references/data-formats.md)
   — the authoritative `run-config.json` schema, field by field.
 - [`../../skills/agent-coach/references/safety-invariants.md`](../../skills/agent-coach/references/safety-invariants.md)
-  — S1–S7, including S5 (role separation) and S7 (noise measured from Runner
-  variance, grader at temperature 0).
+  — the seven safety rules (S1–S7), including S5 (role separation) and S7 (noise
+  measured from Runner variance, grader at temperature 0).

@@ -191,6 +191,7 @@ and `budget.max_usd_per_turn` in `run-config.json`. Total cost scales with
 - [`run-config.md`](./run-config.md) — every `run-config.json` field, and the
   pre-flight check that enforces honest measurement.
 - [`../../skills/agent-coach/references/safety-invariants.md`](../../skills/agent-coach/references/safety-invariants.md)
-  — S1–S7: why the merge gate, the held-out HALT, and staging exist.
+  — the seven safety rules (S1–S7): why the merge gate, the held-out HALT, and
+  staging exist.
 - [`../../skills/agent-coach/references/loop-concepts.md`](../../skills/agent-coach/references/loop-concepts.md)
   — the principles behind every design choice.

@@ -6,7 +6,7 @@
 > blank is the design's most important safety device.
 > 한국어판: [`golden-set-drafter.ko.md`](./golden-set-drafter.ko.md)
 
-The full skill contract: [`skills/golden-set-drafter/SKILL.md`](../../skills/golden-set-drafter/SKILL.md)
+The skill's full rulebook (its contract): [`skills/golden-set-drafter/SKILL.md`](../../skills/golden-set-drafter/SKILL.md)
 
 ---
 
@@ -67,10 +67,12 @@ with nothing left to catch it.
 So this skill:
 
 - **never writes held-out criteria in any form.** It refuses to provide examples, starting
-  points, or "just a rough draft" — rule §5-2 of the skill contract, no exceptions. The
-  refusal itself is part of the safety design.
-- leaves the enforcement to **code**: agent-coach's `op=split` fails while any held-out
-  criteria are empty, and its error names exactly which case ids are missing. That error
+  points, or "just a rough draft" — this is written into section 5-2 of the skill
+  contract (`SKILL.md`), with no exceptions. The refusal itself is part of the safety
+  design.
+- leaves the enforcement to **code**: agent-coach's split-and-freeze command `op=split`
+  fails while any held-out criteria are empty, and its error names exactly which case
+  ids are missing. That error
   *is* the gate — here is a real captured run:
   [`gate-first-run.example.json`](../../examples/golden-set-drafter/en/gate-first-run.example.json).
 
@@ -108,8 +110,8 @@ steps (the emitted runbook walks you through them, written in terms of your own 
   can still tell good from bad, or is already saturated — is agent-coach's
   calibration step.
 - Train inputs AND train criteria are both AI-authored — a conscious v1 trade-off. What
-  contains that risk is the human-owned held-out criteria, plus agent-coach's S1
-  overfitting HALT.
+  contains that risk is the human-owned held-out criteria, plus agent-coach's
+  overfitting HALT (safety rule S1: stop the run when overfitting is detected).
 - Every emitted runbook carries **all ten honest limitations in full** — the emit code
   counts the numbered items and refuses to produce a runbook with fewer.
 
@@ -117,7 +119,7 @@ steps (the emitted runbook walks you through them, written in terms of your own 
 
 | Document | Contents |
 |---|---|
-| [`skills/golden-set-drafter/SKILL.md`](../../skills/golden-set-drafter/SKILL.md) | The full skill contract (steps, rules, §5-2) |
+| [`skills/golden-set-drafter/SKILL.md`](../../skills/golden-set-drafter/SKILL.md) | The full skill contract (steps and rules, including section 5-2 — the held-out-rubric refusal) |
 | [`heldout-rubric-guide.md`](../../skills/golden-set-drafter/references/heldout-rubric-guide.md) | The writing guide for the human at the gate |
 | [`examples/golden-set-drafter/`](../../examples/golden-set-drafter/en/draft-output/golden-set.example.json) | Example outputs (`ko/` / `en/` mirror) |
 | [`../agent-coach/golden-set.md`](../agent-coach/golden-set.md) | Golden-set craft in general — the guide this skill defers to |

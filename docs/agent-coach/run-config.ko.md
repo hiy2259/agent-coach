@@ -45,12 +45,12 @@
   파일에 자유롭게 메모를 남길 수 있습니다.
 - **최상위.** `target`과 `golden_set`은 실제 대상 파일과 그 시험지(골든셋)를 가리킵니다.
   둘 다 상대 경로입니다.
-- **`runner`** 는 `claude-opus-4-8`을 **temperature 0.7**로 씁니다. *운영에서 실제로 쓰는
-  모델·temperature 그대로*라는 뜻입니다. 그래야 루프가 보정하는 노이즈가 진짜 노이즈가
-  됩니다. `temperature: 0`으로 인위적으로 조용하게 만든 노이즈가 아니라요.
+- **`runner`** 는 `claude-opus-4-8`을 **temperature 0.7**, 즉 *운영에서 실제로 쓰는
+  모델·temperature 그대로* 사용합니다. 그래야 루프가 보정하는 노이즈가 `temperature: 0`으로
+  인위적으로 낮춘 조용한 노이즈가 아니라, 실사용에서 겪을 진짜 노이즈가 됩니다.
 - **`grader`** 는 *다른* 모델(`claude-sonnet-4-6`)을 **temperature 0**으로, `version_id`를
-  고정해서 씁니다. 스스로는 무작위성을 전혀 더하지 않는, 안정된 잣대(측정 기준)입니다.
-  제안자와 다른 모델로 두는 것이 채점을 정직하게 지킵니다(제안 ≠ 채점).
+  고정해서 씁니다. 이렇게 하면 Grader는 무작위성을 전혀 더하지 않는 안정된 잣대(측정
+  기준)가 됩니다. 그리고 제안자와 다른 모델로 두어야 채점이 정직하게 유지됩니다(제안 ≠ 채점).
 - **`proposer`** 는 `claude-opus-4-8`을 낮은 temperature(**0.3**)로 써서, 집중된 단일
   편집을 만듭니다. 여기서는 마침 Runner와 같은 모델인데, 그래도 괜찮습니다. 반드시
   지켜야 할 분리 규칙은 proposer ≠ grader와 bootstrapper ≠ grader뿐이기 때문입니다.
@@ -71,8 +71,8 @@ grader와 다른 모델로 추가하세요.
 ## 측정을 정직하게 지키는 세 가지 규칙
 
 `run-config.json`의 대부분은 평범한 조절값입니다: 턴 수, 예산 상한 같은 것들. 하지만 세
-가지 설정은 취향의 문제가 아닙니다. 루프가 실제 품질을 측정하느냐, 스스로를 속이느냐를
-가릅니다. 아래 사전 점검은 이 중 강한 규칙이 어긋나면 **실행을 차단합니다**.
+가지 설정은 취향의 문제가 아니라, 루프가 실제 품질을 측정하느냐 스스로를 속이느냐를
+가르는 문제입니다. 아래 사전 점검은 이 중 강한 규칙이 어긋나면 **실행을 차단합니다**.
 
 **1. Runner는 곧 운영 환경입니다.** `runner.model`과 `runner.temperature`는 실제 서비스에
 쓰는 모델과 temperature여야 합니다. 루프는 노이즈 허용 오차(`eps_train` / `eps_heldout`)를
@@ -84,15 +84,15 @@ grader와 다른 모델로 추가하세요.
 **2. Grader는 고정된, 흔들리지 않는 잣대입니다.** `grader.temperature`는 반드시 `0`이어야
 하고, `grader.version_id`에는 *어떤* 잣대를 썼는지 기록합니다. temperature 0에서는 같은
 텍스트를 두 번 채점하면 완전히 같은 점수가 나옵니다. 즉 Grader는 무작위성을 **전혀**
-보태지 않고, 측정되는 노이즈는 전부 (마땅히 그래야 할) Runner 쪽에서 나옵니다(S7). 버전을
-고정해 두면 나중에 "실행 간 점수 추세가 *대상*의 개선을 반영한 것인지, *잣대*가 슬며시
+보태지 않고, 측정되는 노이즈는 전부 (마땅히 그래야 할) Runner 쪽에서 나옵니다. 이것이
+agent-coach의 일곱 가지 안전 규칙 중 하나인 **S7**입니다. 버전을 고정해 두면 나중에 "실행 간 점수 추세가 *대상*의 개선을 반영한 것인지, *잣대*가 슬며시
 변한 것인지"를 확인할 수 있습니다.
 
 **3. 제안한 자는 채점하지 않습니다.** `proposer.model`은 `grader.model`과 달라야
 합니다(콜드 스타트에서는 `bootstrapper.model`도 `grader.model`과 달라야 합니다). "네가
 *직접* 만든 변경이 도움이 됐어?"라는 질문을 받은 모델은 "그렇다"고 답하는 쪽으로 이미
-기울어 있습니다. 이것이 바로 자가 채점 시험입니다(S5). 제안과 채점을 서로 다른 모델에
-맡기는 것이 역할 분리를 말뿐이 아니라 실제로 만듭니다. 제안자가 Runner와 같은 모델을
+기울어 있습니다. 이것이 바로 안전 규칙 **S5**가 금지하는 자가 채점 시험입니다. 제안과
+채점을 서로 다른 모델에 맡겨야 역할 분리가 말뿐이 아니라 실제가 됩니다. 제안자가 Runner와 같은 모델을
 쓰는 것은 *괜찮습니다*. 절대 넘으면 안 되는 벽은 Grader와의 사이에만 있습니다.
 
 ---
@@ -107,7 +107,7 @@ grader와 다른 모델로 추가하세요.
 | `runner` | `temperature` | number | 실사용 temperature (`eps`를 만들어 내는 분산의 원천) | 실제 운영 temperature, 예: `0.7` (`0` 아님) |
 | `runner` | `max_output_tokens` | number | 대상 실행 1회의 출력 상한 | 완전한 답이 나올 만큼, 예: `4096` |
 | `grader` | `model` | string | 채점 모델 (실행 내내 동일하게 유지) | **제안자와 다른**, 채점을 맡길 만한 모델 |
-| `grader` | `temperature` | number | **반드시 `0`** (채점은 분산을 더하지 않음, S7) | 항상 `0` (아니면 사전 점검이 에러) |
+| `grader` | `temperature` | number | **반드시 `0`** (채점은 분산을 더하지 않음; 안전 규칙 S7) | 항상 `0` (아니면 사전 점검이 에러) |
 | `grader` | `version_id` | string | 채점자가 나중에 달라졌는지(드리프트) 확인할 수 있게 남기는 버전 기록 | 날짜나 태그, 예: `"2026-06-16"` |
 | `proposer` | `model` | string | 턴마다 변경 한 건을 제안하는 모델 | **`grader.model`과 반드시 달라야 함** (제안 ≠ 채점) |
 | `proposer` | `temperature` | number | 집중된 제안을 위한 낮은 temperature | 예: `0.3` |
@@ -153,4 +153,5 @@ printf '%s' '{"config_path":"./run-config.json"}' | python3 skills/agent-coach/s
 - [`../../skills/agent-coach/references/data-formats.md`](../../skills/agent-coach/references/data-formats.md):
   기준이 되는 `run-config.json` 스키마, 필드별 설명.
 - [`../../skills/agent-coach/references/safety-invariants.md`](../../skills/agent-coach/references/safety-invariants.md):
-  S1–S7, 특히 S5(역할 분리)와 S7(Runner 분산으로 잰 노이즈, 채점자 temperature 0).
+  일곱 가지 안전 규칙(S1–S7), 특히 S5(역할 분리)와 S7(Runner 분산으로 잰 노이즈, 채점자
+  temperature 0).

@@ -60,7 +60,7 @@ How the draft is made:
 
 - Three AI roles — a proposer, an adversary (attacker), and an arbiter (judge) — debate and refine the case inputs and the train-side grading criteria until they reach agreement.
 - Every train case is then run against **your real target file with your real production model**, so each case carries evidence of whether the current prompt actually fails it.
-- One thing is deliberately left blank: **the held-out grading criteria.** The skill never writes them — you do. While they are empty, agent-coach's `op=split` command refuses to run, so the improvement loop can never "study for" its own final exam. That blank is a safety device, not an oversight.
+- One thing is deliberately left blank: **the held-out grading criteria.** The skill never writes them — you do. While they are empty, agent-coach's split-and-freeze command (`op=split`) refuses to run, so the improvement loop can never "study for" its own final exam. That blank is a safety device, not an oversight.
 
 ### Using it
 

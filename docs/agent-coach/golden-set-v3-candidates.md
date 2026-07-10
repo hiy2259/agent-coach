@@ -49,7 +49,8 @@ culprit is…" or "stems from…"):
    unsatisfiable.
 3. Do **NOT** bundle this with the queued "index 5 / format de-saturation"
    candidate. That one stresses an unrelated axis (output format), does nothing to
-   relieve c4's ceiling, and carries its own S5 human-curation burden.
+   relieve c4's ceiling, and adds its own burden under safety rule S5 (a human must
+   curate the new cases).
 
 ### The real backstop for the underlying grader disagreement
 

@@ -60,7 +60,7 @@ where the target is weak**, across the full breadth of its real job:
     specified" instead of making one up.
   - *Realistic hard cases* — inputs the target actually meets in production but
     handles inconsistently. These are the most valuable ones, and they belong in
-    **held-out** (see §4).
+    **held-out** (see section 4 below).
   - *Breadth* — spread the cases across the target's whole job, not one narrow
     skill.
 - **A few genuinely probing cases beat a pile of near-duplicates.** Variety of
@@ -68,8 +68,9 @@ where the target is weak**, across the full breadth of its real job:
 
 ### You own the inputs, not just the grading criteria
 
-The guard that carries the most weight is this: **you supply your own real cases**
-(safety rule S5). At cold start the skill can *draft* candidate inputs for you —
+The guard that carries the most weight is this: **you supply your own real cases**.
+This is **S5**, one of agent-coach's seven safety rules (all seven are laid out in
+[how it works](./how-it-works.md)). At cold start the skill can *draft* candidate inputs for you —
 that is exactly what the **Bootstrapper** role is for, and it deliberately aims at
 the target's weaknesses — but what it produces are **candidates only**. You approve
 them, prune them, and add the hard cases it missed. Rubber-stamping an AI-drafted
@@ -159,7 +160,7 @@ change works beyond the cases it was tuned on.
   works where held-out covers situations train doesn't. Make the two splits
   genuinely different *real* cases.
 - **Sizes:** at least 5 active train cases and 3 held-out cases (`train ≥ 5`,
-  `heldout ≥ 3` — the S5 size gate). The skill warns hard below these numbers. A
+  `heldout ≥ 3` — the minimum sizes required by safety rule S5). The skill warns hard below these numbers. A
   bigger set gives a steadier signal; balance that against per-run cost.
 
 ---
@@ -191,8 +192,8 @@ well is how the target keeps improving past its first plateau:
 - **Fold failures back in.** Every discarded or halted attempt can log a
   `candidate_input` in `failure-log.jsonl` — an input that *would* catch the gap
   that attempt just revealed. Promote the good ones into the next version's
-  `cases[]`. (This is the S6 evolution path: today's failures become the next
-  version's cases.)
+  `cases[]`. (Safety rule S6 guarantees this path: today's failures become the
+  next version's cases.)
 - **Retire dead cases; don't delete them.** A case that every version now passes
   has lost its power to discriminate. Set `status: "retired"` — the case stays in
   the file for the record but is excluded from scoring. (Deleting it would erase
@@ -216,7 +217,7 @@ well is how the target keeps improving past its first plateau:
 | **Optimizing against held-out** (peeking at it, tuning to it) | Destroys your only generalization guard |
 | **Too-small set** | `eps` becomes a noisy estimate; the gate wobbles and merges or rejects on luck |
 | **Criteria beyond what the model/tools can do** | A permanent plateau — no wording extracts a capability the model lacks; change the model or tools, not the words |
-| **The model writes both inputs and criteria** | A self-graded exam (S5) — the loop optimizes toward the model's own blind spots |
+| **The model writes both inputs and criteria** | A self-graded exam (violates safety rule S5) — the loop optimizes toward the model's own blind spots |
 
 ---
 
@@ -297,7 +298,8 @@ have a set worth running.
 - [`../../skills/agent-coach/references/data-formats.md`](../../skills/agent-coach/references/data-formats.md)
   — the authoritative `golden-set.json` schema, field by field.
 - [`../../skills/agent-coach/references/safety-invariants.md`](../../skills/agent-coach/references/safety-invariants.md)
-  — S1–S7 in full, including S5 (human-owned sourcing + the size gate).
+  — the seven safety rules (S1–S7) in full, including S5 (human-owned sourcing +
+  the size minimums).
 - [`../../skills/golden-set-drafter/SKILL.md`](../../skills/golden-set-drafter/SKILL.md) — a companion
   skill that drafts a starting set for you (council-drafted cases + train rubrics,
   emitted unfrozen) while leaving **every held-out rubric for you to write** — and
